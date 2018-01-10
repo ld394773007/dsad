@@ -14,7 +14,7 @@
       </div>
     </div>
     <transition name="right-in">
-      <captcha @send="send" :mobile="mobile" :isRigister="isRegister" @close="visiable = false" v-if="visiable"></captcha>
+      <captcha @send="send" :mobile="mobile" :isRegister="isRegister" @close="visiable = false" v-if="visiable"></captcha>
     </transition>
 
   </div>
@@ -55,7 +55,7 @@ export default {
 
       let {post} = this.$axios
       this.$toast.loading()
-      post('/v1/user/send-signup-sms', {mobile: mobile, check: 0})
+      post('/v1/user/send-signup-sms', {mobile: mobile, check: 2})
       .then(({data}) => {
         this.$toast.clear()
         if (!data.status) {
@@ -80,6 +80,7 @@ export default {
   border-width: 0;
 }
 .p_validate {
+  top: 45px;
   background-color: #fff;
   &_title {
     font-size: 20px;

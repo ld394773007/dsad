@@ -11,6 +11,12 @@ a { text-decoration: none; color: #666; }
 body { margin: 0 auto; min-width: 320px; max-width: 640px; height: 100%; font-size: 14px; fon-family:PingFangSC-Medium,-apple-system,Helvetica,sans-serif; line-height: 1.5; color: #666; -webkit-text-size-adjust: 100% !important; text-size-adjust: 100% !important; }
 input[type="text"], textarea { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
 
+input,
+textarea {
+    border: 0; /* 方法1 */
+    -webkit-appearance: none; /* 方法2 */
+}
+
 .border0 {
   border: none
 }
@@ -109,11 +115,12 @@ input[type="text"], textarea { -webkit-appearance: none; -moz-appearance: none; 
     margin: 15px auto;
   }
   .m_input_group & {
+    position: relative;
     width: 100%;
     margin: 0;
     border: none;
-    border-top: 1px #e3e3e3 solid;
     border-radius: 0;
+    border-top: 1px #e3e3e3 solid;
     &:first-child {
       border: none;
     }
@@ -154,6 +161,10 @@ input[type="text"], textarea { -webkit-appearance: none; -moz-appearance: none; 
     color: $color_theme;
     border: none;
     background-color: transparent;
+    &:active {
+      background-color: transparent;
+      color: $color_theme;
+    }
   }
   &.full {
     width: 100%;
@@ -307,6 +318,10 @@ input[type="text"], textarea { -webkit-appearance: none; -moz-appearance: none; 
   }
 }
 
+/*订单详情
+----------------------------------------------------------------------------------------------------*/
+
+
 .van-dialog__message {
   text-align: center;
 }
@@ -334,6 +349,10 @@ input[type="text"], textarea { -webkit-appearance: none; -moz-appearance: none; 
 
 li.van-picker-column--selected {
   color: #000000;
+}
+
+.van-nav-bar__left {
+  padding-right:30px;
 }
 
 .van-tab--active {

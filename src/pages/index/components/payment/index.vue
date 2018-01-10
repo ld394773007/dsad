@@ -13,7 +13,7 @@
           <p>商品总价: </p><span>¥<i>{{goodAmount}}</i></span>
         </div>
         <div class="price">
-          <p>需支付订金: </p><span class="blue">¥<i>{{isFree ? '0.00' : '99.00'}}</i></span>
+          <p>需支付: </p><span class="blue">¥<i>{{isFree ? '0.00' : '99.00'}}</i></span>
         </div>
       </div>
       <div class="pay_mode">
@@ -28,7 +28,7 @@
         <a class="fixed_btn_wrap_left" href="javascript:">
           <span>共1项, 总计：</span><span class="blue">¥<i>{{toDecimal2(getNum(detailData.order_amount))}}</i></span>
         </a>
-        <a class="fixed_btn_wrap_right" href="javascript:" @click="sendPay">确定支付订金</a>
+        <a class="fixed_btn_wrap_right" href="javascript:" @click="sendPay">确定支付</a>
       </div>
     </div>
     <transition name="right-in">
@@ -67,7 +67,7 @@
     },
     created () {
       this.getPayList()
-      this.createOrder()
+      this.getOrderDeatil()
     },
     computed: {
       formatCountTime () {
@@ -110,8 +110,8 @@
       sendPay () {
         this.$emit('sendPay', this.pay_code)
       },
-      // 创建订单
-      createOrder () {
+      // 获取订单详情
+      getOrderDeatil () {
         let { get } = this.$shopApi
         get('/v1/order/detail', {
           params: {

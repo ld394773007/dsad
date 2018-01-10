@@ -20,7 +20,6 @@ const store = new Vuex.Store({
     // 更新用户信息
     [UPLOAD_USER_INFO] (state, payload) {
       state.userInfo = payload
-      console.log(payload, state.userInfo)
     },
     // 修改用户信息中的一个值
     [CHANGE_USER_INFO] (state, payload) {

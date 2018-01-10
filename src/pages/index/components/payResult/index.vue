@@ -1,21 +1,21 @@
 <template>
   <div class="m_wrap" style="z-index: 99">
     <van-nav-bar class="m_header" fixed>
-      <span slot="title">支付状态</span>
+      <span slot="title">订单状态</span>
     </van-nav-bar>
     <div class="m_body pay_result_wrap">
-      <span>支付结果</span>
+      <span>订购结果</span>
       <div class="pay_result_icon">
         <i></i>
-        <p>支付成功</p>
+        <p>订购成功</p>
       </div>
       <span>订单</span>
       <div class="m_content">
         <h2 class="m_content_title">{{data.pro_name}}</h2>
         <p class="m_content_subtitle">开始时间：{{startTime}}</p>
-        <div class="price">
+        <!-- <div class="price">
           <span>已支付订金:</span><span class="highlight_text weight large"><i>¥</i>{{price}}</span>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="download_btn">去下载叮叮云教室App</div>

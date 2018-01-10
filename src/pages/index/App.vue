@@ -8,6 +8,7 @@
 export default {
   name: 'app',
   created () {
+    document.getElementById('qdt').setAttribute('class', 'hide')
     let url = window.localStorage.getItem('payUrl')
     if (url) {
       this.$router.push(url)

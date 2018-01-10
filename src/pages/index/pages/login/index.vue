@@ -1,10 +1,10 @@
 <template>
   <div class="m_wrap d_login">
-    <van-nav-bar class="m_header border0" fixed left-arrow @click-left="close">
+    <van-nav-bar class="m_header border0" fixed>
     </van-nav-bar>
 
     <div class="m_body d_login_content">
-      <h2 class="d_login_content_title">登陆叮叮</h2>
+      <h2 class="d_login_content_title">登陆叮叮云教室</h2>
       <div class="m_tab_wrapper">
         <div class="m_tab_nav" >
           <a class="m_tabs" @click="changeActive(0)">验证码登陆</a>
@@ -25,7 +25,7 @@
                 <input class="m_input" v-model="mobile" type="text" placeholder="手机号">
                 <input class="m_input" v-model="password" type="password" placeholder="密码">
               </div>
-              <a class="m_btn full" @click="login"><span style="color: #fff; margin-bottom:0;">登陆</span></a>
+              <a class="m_btn full" @click="login"><span>登陆</span></a>
               <router-link to="/reset" class="m_btn m_btn_text wjmm_btn">忘记密码？</router-link>
             </div>
           </div>
@@ -35,6 +35,13 @@
         </div>
       </div>
     </div>
+    <register
+      key="register"
+      v-if="registerVisiable"
+      @close="registerVisiable = false"
+      @send="register"
+      @changeMobile="changeMobile"
+    />
     <transition name="right-in">
       <captcha
         key="captcha"
@@ -47,12 +54,7 @@
         v-if="visiable"
       />
     </transition>
-    <register
-      key="register"
-      v-if="registerVisiable"
-      @close="registerVisiable = false"
-      @send="register"
-    />
+
   </div>
 </template>
 <script>
@@ -71,13 +73,16 @@ export default {
   },
   created () {
     let {k, p, m} = this.$route.query
-    if (k && m) {
-
-    } else if (p && m) {
+    if (k && m && (k !== '')) {
+      this.captchaLogin({mobile: m, key: k})
+    } else if (p && m && (p !== '')) {
       this.passLogin(m, p, '自动登录失败')
     }
   },
   methods: {
+    changeMobile (n) {
+      this.mobile = n
+    },
     changeActive (v) {
       this.active = v
     },
@@ -86,32 +91,33 @@ export default {
       this.getUserInfo(data)
       this.getLesson()
     },
-    registerFn () {
-      this.$router.push('user')
+    registerFn (data) {
+      this.$router.push('home')
+      this.getUserInfo(data)
+      this.getLesson()
     },
     getUserInfo (v) {
       let {get} = this.$axios
       get('/v1/member/profile')
       .then(({data}) => {
         if (!data.status) {
-          let {mobile, password, token} = v
+          let {mobile, token} = v
           let obj = {
             mobile,
             token
           }
           if (v.key) {
             obj.key = v.key
-          } else {
-            obj.password = password
+          } else if (v.password) {
+            obj.password = v.password
           }
-          console.log(v)
           window.localStorage.setItem('phoneNum', mobile)
           this.$store.commit('UPLOAD_USER_INFO', data.data)
           let info = JSON.parse(JSON.stringify(Object.assign(data.data, obj)))
-
           if (window.dsBridge) {
+            let arr = []
             let res = window.dsBridge.call('doInfoClick', info)
-            res && console.log(res)
+            res && arr.push(res)
           }
         }
       })
@@ -130,9 +136,9 @@ export default {
       let {mobile, password} = this
       this.passLogin(mobile, password, '提示')
     },
-    captchaLogin (mobile, captcha) {
+    captchaLogin (obj) {
       let {post} = this.$axios
-      post('/v1/user/sms-login', {mobile, captcha})
+      post('/v1/user/sms-login', obj)
       .then(({data}) => {
         this.$toast.clear()
         if (!data.status) {
@@ -146,7 +152,7 @@ export default {
           this.$shopApi.defaults.headers = {
             Authorization: 'Bearer ' + data.data.token
           }
-          this.loginFn({mobile, ...data.data})
+          this.loginFn({mobile: obj.mobile, ...data.data})
         } else {
           this.$dialog.alert({
             title: '提示',
@@ -181,7 +187,11 @@ export default {
       })
     },
     register (m) {
-      this.sendCaptcha(m, (data) => {
+      this.sendCaptcha(m, 0, (data) => {
+        this.$toast.success('发送成功')
+        setTimeout(() => {
+          this.$toast.clear()
+        }, 1000)
         this.isRegister = true
         this.visiable = true
       })
@@ -193,28 +203,18 @@ export default {
         return false
       }
 
-      this.sendCaptcha(mobile, (data) => {
-        if (data.data === 'success' && !v) {
-          this.$dialog.confirm({
-            title: '提示',
-            message: '此手机号还未注册， 是否进行注册？'
-          }).then(() => {
-            this.isRegister = true
-            this.visiable = true
-          })
-        } else {
-          this.$toast.success('发送成功')
-          setTimeout(() => {
-            this.$toast.clear()
-          }, 1000)
-          this.visiable = true
-        }
+      this.sendCaptcha(mobile, 1, (data) => {
+        this.$toast.success('发送成功')
+        setTimeout(() => {
+          this.$toast.clear()
+        }, 1000)
+        this.visiable = true
       })
     },
-    sendCaptcha (mobile, fn) {
+    sendCaptcha (mobile, check, fn) {
       let {post} = this.$axios
       this.$toast.loading()
-      post('/v1/user/send-signup-sms', {mobile, check: 0})
+      post('/v1/user/send-signup-sms', {mobile, check})
       .then(({data}) => {
         this.$toast.clear()
         if (!data.status) {

@@ -137,6 +137,8 @@ h2 {
   margin-bottom: 20px;
   font-size: 22px;
   text-align: center;
+  color: #000000;
+  font-weight: normal;
 }
 .reset_content {
   margin: 0 auto;

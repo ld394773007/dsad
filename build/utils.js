@@ -131,7 +131,6 @@ let arr = []
 
 entryHtml.forEach((filePath) => {
     let filename = filePath.substring(filePath.lastIndexOf('\/') + 1, filePath.lastIndexOf('.'))
-    console.log(filename)
     if(filename.indexOf('pro') !== -1) return
     let conf = {
         // 模板来源

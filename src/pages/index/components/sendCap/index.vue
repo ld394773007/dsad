@@ -106,6 +106,7 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/scss/variable/index';
 .captcha_wrap {
+  top: 45px;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -125,6 +126,8 @@ export default {
 .captcha_title,
 .register_title {
   font-size: 20px;
+  color: #000;
+  font-weight: normal;
 }
 
 .captcha_feedback {

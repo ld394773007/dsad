@@ -14,27 +14,28 @@
     <transition name="bottom-go">
       <srcoll v-if="detailData" :data="detailData" @init="_calculateHeight" :listenScroll="true" :probeType="3" @scroll="scroll" ref="scroll" class="m_body" style="top:82px;margin: 8px 16px;">
         <div class="m_tab_wrap content" style="padding-bottom: 50px;">
-          <div class="m_tab_content mod_content">
+          <div class="m_tab_content deatils_content mod_content">
             <h2>{{detailData.pro_name}}</h2>
             <span>开始时间：{{formatStartTime}}</span>
             <span>科目：<i>{{detailData.link.category.title}}</i></span>
-            <div class="price">
+            <!-- <div class="price">
               <span class="blue">¥<i>{{detailData.promote_price ? detailData.promote_price : detailData.price}}</i></span>
-            </div>
+            </div> -->
           </div>
-          <div class="m_tab_content mod_content">
+          <div class="m_tab_content deatils_content mod_content">
             <p class="m_tab_content_title">课程大纲</p>
-            <ul>
+            <div class="no_dg" v-if="!lesson.length">暂无大纲</div>
+            <ul v-if="lesson.length">
               <li :key="item.id" v-for="(item, index) in lesson">
                 <p><i>{{index + 1}}.</i>{{item.name}}</p>
                 <span>{{formatTime(item.start_time)}}</span>
               </li>
             </ul>
-            <div class="tab_btn_wrap">
+            <div class="tab_btn_wrap" v-if="lesson.length">
               <van-button class="tab_btn" size="small" @click="handlerShow('Outline')">查看全部课程</van-button>
             </div>
           </div>
-          <div class="m_tab_content mod_content">
+          <div class="m_tab_content deatils_content mod_content">
             <p class="m_tab_content_title">课程详情</p>
             <p>【课程难度】</p>
             <div class="start-content">
@@ -58,7 +59,7 @@
         <i class="iconfont">&#xe692;</i>
         <span>联系客服</span>
       </a>
-      <a class="fixed_btn_wrap_right" href="javascript:" @click="clearChart">立即预约{{isFree ? '' : '(订金99元)'}}</a>
+      <a class="fixed_btn_wrap_right" href="javascript:" @click="getPayList(0)">立即预约</a>
     </div>
     <div class="m_popup" v-if="visiable">
       <div class="m_popup_mask" @click="handlerCancel"></div>
@@ -112,7 +113,9 @@
         visiableResult: false,
         detailData: null,
         orderId: 0,
-        QRcode: ''
+        QRcode: '',
+        payList: [],
+        pay_code: ''
       }
     },
     computed: {
@@ -197,15 +200,15 @@
       },
       // 获取课程列表
       getLesson (id) {
-        // let {get} = this.$shopApi
+        let {get} = this.$shopApi
 
-        // get('/v1/product/get-lessons', {
-        //   params: {courseId: id}
-        // }).then(({data}) => {
-        //   if (!data.status) {
-        //     this.lessonList = data.data
-        //   }
-        // })
+        get('/v1/product/get-lessons', {
+          params: {courseId: id}
+        }).then(({data}) => {
+          if (!data.status) {
+            this.lessonList = data.data
+          }
+        })
       },
       // 获取商品信息
       getDetail () {
@@ -321,14 +324,26 @@
 
         post('/v1/order/cancel', {order_id: this.orderId})
       },
+       // 获取支付方式列表
+      getPayList (v) {
+        let { get } = this.$shopApi
+        get('/v1/order/pay-list')
+          .then(({data}) => {
+            if (!data.status) {
+              this.payList = data.data
+              this.pay_code = data.data[0].pay_code
+              this.clearChart(v)
+            }
+          })
+      },
       // 清空购物车
-      clearChart () {
+      clearChart (v) {
         let { post } = this.$shopApi
         post('/v1/cart/clear')
           .then(({data}) => {
             if (!data.status) {
               this.$toast.loading()
-              this.addChart()
+              this.addChart(v)
             } else {
               this.$toast.clear()
               this.$dialog.alert({
@@ -338,7 +353,7 @@
           })
       },
       // 加入购物车
-      addChart () {
+      addChart (v) {
         let { post } = this.$shopApi
         post('/v1/cart/add', {
           pro_id: this.id,
@@ -346,7 +361,7 @@
         })
           .then(({data}) => {
             if (!data.status) {
-              this.createOrder()
+              this.createOrder(v)
             } else {
               this.$toast.clear()
               this.$dialog.alert({
@@ -356,14 +371,18 @@
           })
       },
       // 创建订单
-      createOrder () {
+      createOrder (v) {
         let { post } = this.$shopApi
         post('/v1/order/create')
           .then(({data}) => {
             this.$toast.clear()
             if (!data.status) {
               this.orderId = data.data.id
-              this.handlerShow('Pay')
+              if (v === 0) {
+                this.sendPay(this.pay_code)
+              } else {
+                this.handlerShow('Pay')
+              }
             } else {
               this.$dialog.alert({
                 message: data.message
@@ -411,7 +430,12 @@
 
 <style lang="scss">
   @import '../../assets/scss/variable/index';
-
+  .no_dg {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   .deatils-tab {
     display: flex;
     justify-content: center;
@@ -450,7 +474,7 @@
     }
   }
 
-  .m_tab_content {
+  .deatils_content {
     margin-top: 12px;
     padding: 16px 12px;
     background-color: #fff;
@@ -538,6 +562,7 @@
   }
 
   .introduce-content {
+    padding: 15px 0;
     display: flex;
     justify-content: center;
     flex-direction: column;

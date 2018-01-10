@@ -18,13 +18,25 @@
 <script>
 export default {
   name: 'payLogin',
+  props: {
+    mobile: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
-      mobile: ''
+      _mobile: ''
+    }
+  },
+  watch: {
+    mobile (n) {
+      this.$emit('changeMobile', n)
     }
   },
   created () {
     this.$toast.clear()
+    this._mobile = this._mobile
   },
   mounted () {
     this.$nextTick(() => {

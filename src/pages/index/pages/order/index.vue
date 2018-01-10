@@ -1,50 +1,28 @@
 <template>
-  <div class="m_wrap">
-    <van-nav-bar class="m_header" fixed left-arrow @click-left="close">
-      <span slot="title">订单列表</span>
-    </van-nav-bar>
-    <div class="m_body">
-      <van-tabs :active="active">
-        <van-tab title="待支付订单">
-          <srcoll class="srcoll_content">
-            <div class="content">
-              <div class="loading_content" v-if="show">
-                <van-loading style="width: 22px; height: 22px;" type="circle" color="black" />
+  <div>
+    <div class="m_wrap">
+      <van-nav-bar class="m_header" fixed left-arrow @click-left="close">
+        <span slot="title">订单列表</span>
+      </van-nav-bar>
+      <srcoll class="m_body">
+        <div class="content">
+          <div class="loading_content" v-if="show">
+            <van-loading style="width: 22px; height: 22px;" type="circle" color="black" />
+          </div>
+          <transition name="bottom-go">
+            <div v-if="!show" style="padding: 15px;">
+              <div class="no_lesson" v-if="!orderList.length">
+                <i class="icon_no_lesson"></i>
+                <p>没有待支付的订单哦~</p>
               </div>
-              <transition name="bottom-go">
-                <div v-if="!show" style="padding: 15px;">
-                  <div class="no_lesson" v-if="!unpaidOrderList.length">
-                    <i class="icon_no_lesson"></i>
-                    <p>没有待支付的订单哦~</p>
-                  </div>
-                  <orderItem @hanlerClick="hanlerClick" :key="item.id" :item="item" :index="index" v-for="(item,index) in unpaidOrderList"></orderItem>
-                </div>
-              </transition>
+              <orderItem @hanlerClick="hanlerClick" :key="item.id" :item="item" :index="index" v-for="(item,index) in orderList"></orderItem>
             </div>
-          </srcoll>
-        </van-tab>
-        <van-tab title="全部订单">
-          <srcoll class="srcoll_content">
-            <div class="content">
-              <div class="loading_content" v-if="show">
-                <van-loading style="width: 22px; height: 22px;" type="circle" color="black" />
-              </div>
-              <transition name="bottom-go">
-                <div v-if="!show" style="padding: 15px;">
-                  <div class="no_lesson" v-if="!orderList.length">
-                    <i class="icon_no_lesson"></i>
-                    <p>没有订单哦~</p>
-                  </div>
-                  <orderItem @hanlerClick="hanlerClick" :key="item.id" :item="item" :index="index" v-for="(item,index) in orderList"></orderItem>
-                </div>
-              </transition>
-            </div>
-          </srcoll>
-        </van-tab>
-      </van-tabs>
+          </transition>
+        </div>
+      </srcoll>
     </div>
     <transition name="right-in">
-      <orderDetail v-if="orderData" :item="orderData"></orderDetail>
+      <orderDetail @close="orderData = null" v-if="orderData" :item="orderData"></orderDetail>
     </transition>
   </div>
 </template>
@@ -59,14 +37,10 @@
       return {
         show: true,
         orderList: [],
-        unpaidOrderList: [],
         orderData: null
       }
     },
     created () {
-      this.$shopApi.defaults.headers = {
-        Authorization: 'Bearer ujMAkhuM3AZXfvs_iB2nzqR5HuRXy5ph'
-      }
       this.getOrderList()
     },
     methods: {
@@ -82,15 +56,7 @@
         get('/v1/order/list?expand=product,coupon,payLog')
         .then(({data}) => {
           if (!data.staus) {
-            let unpaid = []
-            data.data.forEach((e) => {
-              if (e.order_status < 2 && !e.pay_status) {
-                unpaid.push(e)
-              }
-            })
-
-            this.orderList = data.data
-            this.unpaidOrderList = unpaid
+            this.orderList = data.data.filter((e) => (e.pay_status === 1))
             this.show = false
           }
         })
@@ -122,9 +88,6 @@
 </script>
 <style lang="scss" scoped>
 @import '../../assets/scss/minix/index';
-.srcoll_content {
-  height: calc(100vh - 90px);
-}
 .loading_content {
   padding: 10px;
   display: flex;
@@ -142,9 +105,10 @@
     display: block;
     margin-bottom: 15px;
     width: 64px;
-    height: 52px;
-    @include dprImg('class_kong');
+    height: 62px;
+    @include dprImg('pay_kong');
     background-size: 100%;
+    background-repeat: no-repeat;
   }
 }
 </style>
