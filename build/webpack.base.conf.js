@@ -34,11 +34,23 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
+      '@pagrs': resolve('src/pages'),
+      'muse-components': 'muse-ui/src'
     }
+  },
+  externals: {
+    'vue': 'Vue',
+    'vue-router': 'VueRouter',
+    'vuex': 'Vuex',
+    'axios': 'axios'
   },
   module: {
     rules: [
       ...(config.dev.useEslint ? [createLintingRule()] : []),
+      {
+        test: /muse-ui.src.*?js$/,
+        loader: 'babel-loader'
+      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',

@@ -128,11 +128,14 @@ return map
 exports.htmlPlugin = function() {
 let entryHtml = glob.sync(PAGE_PATH + '/*/*.html')
 let arr = []
+
 entryHtml.forEach((filePath) => {
     let filename = filePath.substring(filePath.lastIndexOf('\/') + 1, filePath.lastIndexOf('.'))
+    console.log(filename)
+    if(filename.indexOf('pro') !== -1) return
     let conf = {
         // 模板来源
-        template: filePath,
+        template: process.env.NODE_ENV === 'production' ? filePath.replace(/.html/, '.pro.html') : filePath,
         // 文件名称
         filename: filename + '.html',
         // 页面模板需要加对应的js脚本，如果不加这行则每个页面都会引入所有的js脚本

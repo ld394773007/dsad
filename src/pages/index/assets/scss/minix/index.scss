@@ -1,0 +1,6 @@
+@mixin dprImg ($url, $type: 'png') {
+  background-image: url('/static/images/' + $url + '@2x.' + $type);
+  @media (-webkit-min-device-pixel-ratio:3), (min-device-pixel-ratio:3) {
+    background-image: url('/static/images/' + $url + '@3x.' + $type );
+  }
+}
