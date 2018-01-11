@@ -1,0 +1,31 @@
+@import '../../assets/scss/minix/index';
+@import '../../assets/scss/theme/index';
+
+.container {
+  @extend %flex_column;
+  width: 350px;
+  margin: 0 auto;
+}
+
+.logo {
+  @extend %flex_column;
+  padding-top: 64px;
+  padding-bottom: 20px;
+  &_img {
+    width: 100px;
+    height: 100px;
+  }
+  &_title {
+    margin-top: 12px;
+    margin-bottom: 2px;
+    font-size: 20px;
+    line-height: 28px;
+  }
+  &_tag {
+    display: block;
+    width: 88px;
+    height: 26px;
+    @include dprImg('teacher_icon');
+    background-size: 100%
+  }
+}

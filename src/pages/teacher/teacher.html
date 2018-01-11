@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta id="title" itemprop="name" content="">
+    <meta id="image" itemprop="image" content="">
+    <meta id="description" name="description" itemprop=description content="">
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,viewport—fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <title>叮叮云教室教师版</title>
+    <link rel="stylesheet" href="/static/css/muse-ui.css">
+    <script>
+      (function () {
+          var docEl = document.documentElement;
+          var isMobile = window.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobi/i.test(navigator.userAgent);
+
+          function setScale() {
+              var pageScale = 1;
+
+              if (window.top !== window) {
+                  return pageScale;
+              }
+
+              var width = docEl.clientWidth || 1024;
+              var height = docEl.clientHeight || 768;
+
+              if (width / height > 1024 / 768) {
+                  // 高度优先
+                  pageScale = height / 768;
+              } else {
+                  pageScale = width / 1024;
+              }
+
+              var content = 'width=' + 1024 + ', initial-scale=' + pageScale
+                + ', maximum-scale=' + pageScale + ', user-scalable=no';
+              document.querySelector('meta[name=viewport]').setAttribute('content', content);
+
+              window.pageScale = pageScale;
+          }
+          if (isMobile) {
+              setScale();
+          } else {
+              docEl.className += ' pc';
+          }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
+    <script src="/static/js/muse-ui.js"></script>
+    <script src="https://cdn.bootcss.com/vuex/3.0.1/vuex.min.js"></script>
+    <script src="https://cdn.bootcss.com/vue-router/3.0.1/vue-router.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.17.1/axios.min.js"></script>
+
+    <!-- built files will be auto injected -->
+  </body>
+</html>

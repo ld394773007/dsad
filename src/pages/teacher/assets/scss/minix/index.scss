@@ -1,0 +1,21 @@
+@mixin dprImg ($url, $type: 'png') {
+  background-image: url('/static/images/' + $url + '@2x.' + $type);
+  background-repeat: no-repeat;
+  @media (-webkit-min-device-pixel-ratio:3), (min-device-pixel-ratio:3) {
+    background-image: url('/static/images/' + $url + '@3x.' + $type );
+  }
+}
+
+
+%flex_column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+%flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

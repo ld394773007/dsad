@@ -48,6 +48,7 @@
             <div class="introduce-content" v-html="detailData.pro_desc"></div>
             <div class="img-wrap">
               <img src="/static/images/deatils.jpg" />
+              <a @click="download"></a>
             </div>
 
           </div>
@@ -55,10 +56,10 @@
       </srcoll>
     </transition>
     <div class="fixed_btn_wrap">
-      <a class="fixed_btn_wrap_left" href="javascript:" @click="showVisiable">
+      <!-- <a class="fixed_btn_wrap_left" href="javascript:" @click="showVisiable">
         <i class="iconfont">&#xe692;</i>
         <span>联系客服</span>
-      </a>
+      </a> -->
       <a class="fixed_btn_wrap_right" href="javascript:" @click="getPayList(0)">立即预约</a>
     </div>
     <div class="m_popup" v-if="visiable">
@@ -78,17 +79,17 @@
       </div>
     </div>
     <transition-group name="right-in">
-      <payment :isFree="isFree" key="payment" @sendPay="sendPay" :id="orderId" :code="QRcode" :detail="detailData" @close="handlerClose('Pay')" v-if="visiablePay" />
-      <outline :data="lessonList" key="outline" @close="handlerClose('Outline')" v-if="visiableOutline"/>
-      <payLogin key="payLogin" @close="handlerClose('PayLogin')" v-if="visiablePayLogin"></payLogin>
-      <QRcode key="QRcode" @success="success" v-if="QRcode !== ''" @close="QRcode = ''" :code="QRcode" :id="orderId" />
-      <payResult key="payResult" v-if="visiableResult" :data="detailData" :startTime="formatStartTime" :price="toDecimal2(getNum(detailData.price))"></payResult>
+      <payment style="z-index:10;" :isFree="isFree" key="payment" @sendPay="sendPay" :id="orderId" :code="QRcode" :detail="detailData" @close="handlerClose('Pay')" v-if="visiablePay" />
+      <outline style="z-index:10;" :data="lessonList" key="outline" @close="handlerClose('Outline')" v-if="visiableOutline"/>
+      <payLogin style="z-index:10;" key="payLogin" @close="handlerClose('PayLogin')" v-if="visiablePayLogin"></payLogin>
+      <QRcode style="z-index:10;" key="QRcode" @success="success" v-if="QRcode !== ''" @close="QRcode = ''" :code="QRcode" :id="orderId" />
+      <payResult style="z-index:11;" key="payResult" v-if="visiableResult" :data="detailData" :startTime="formatStartTime" :price="toDecimal2(getNum(detailData.price))"></payResult>
     </transition-group>
   </div>
 </template>
 
 <script>
-  import {formatTime} from '@/common/js/utils'
+  import {formatTime, ismobile} from '@/common/js/utils'
   export default {
     name: 'm-details',
     components: {
@@ -145,6 +146,13 @@
       this.getDetail()
     },
     methods: {
+      download () {
+        if (ismobile(0) === '0') {
+
+        } else {
+          window.location = 'http://www.yingyushu.com/app_download/ding.apk'
+        }
+      },
       formatTime (t) {
         let time = formatTime(new Date(t * 1000), 'YYYY-MM-DD HH:mm').split(' ')
         let time1 = time[0].split('-')
@@ -581,7 +589,7 @@
     justify-content: center;
     align-items: center;
     background-color: #fff;
-    border-top: 1px $root_bg solid;
+    z-index: 9;
     a {
       flex: 1;
       display: flex;
@@ -687,6 +695,17 @@
 
   .van-tabs__nav-bar {
     background-color: #34A9FF;
+  }
+
+  .img-wrap {
+    position: relative;
+    a {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      height: 200px;
+    }
   }
 </style>
 

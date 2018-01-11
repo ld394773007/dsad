@@ -1,0 +1,205 @@
+
+@import '../minix/index';
+@import '../theme/index';
+* { -webkit-tap-highlight-color: transparent; outline: 0; margin: 0; padding: 0; vertical-align: baseline; }
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td { margin: 0; padding: 0; vertical-align: baseline; }
+img { border: 0 none; vertical-align: top; }
+i, em { font-style: normal; }
+ol, ul { list-style: none; }
+input, select, button, h1, h2, h3, h4, h5, h6 { font-size: 100%; font-family: inherit; }
+table { border-collapse: collapse; border-spacing: 0; }
+a { text-decoration: none; color: #666; }
+body { margin: 0 auto;height: 100%; font-size: 14px; fon-family:PingFangSC-Regular,-apple-system,Helvetica,sans-serif; line-height: 1.5; color: #0B0912; -webkit-text-size-adjust: 100% !important; text-size-adjust: 100% !important; }
+input[type="text"], textarea { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+
+input,
+textarea {
+    border: 0; /* 方法1 */
+    -webkit-appearance: none; /* 方法2 */
+}
+// 动画
+.right-in-enter-active, .right-in-leave-active {
+  transition: all .3s
+}
+.right-in-enter, .right-in-leave-to /* .right-in-leave-active 在低于版本 2.1.8 中 */ {
+  transform: translateX(100%)
+}
+
+.bottom-go-enter-active, .bottom-go-leave-active {
+  transition: all .3s
+}
+.bottom-go-enter, .bottom-go-leave-to /* .right-in-leave-active 在低于版本 2.1.8 中 */ {
+  opacity: 0;
+  transform: translateY(10%)
+}
+
+.m_validate_input {
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  border: 1px #e3e3e3 solid;
+  border-radius: 4px;
+  span {
+    position: relative;
+    padding: 0 8px;
+    display: block;
+    font-weight: bold;
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      height: 90%;
+      border-left: 1px #e3e3e3 solid;
+      transform: translateY(-50%);
+    }
+  }
+  input {
+    flex: 1;
+    padding: 10px 10px;
+    border: none;
+  }
+}
+
+// 按钮
+.m_btn {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #fff;
+  background-color: $themeColor;
+  &.m_btn_danger {
+    background-color: #F76B1C;
+    &:active {
+      background-color: lighten($color: #F76B1C , $amount: 10%);
+    }
+  }
+  &.m_btn_primary {
+    background-color: #4b0;
+    &:active {
+      background-color: lighten($color: #4b0 , $amount: 10%);
+    }
+  }
+  &.m_btn_disabled {
+    background-color: #ADADBD;
+    background-color: lighten($color: #ADADBD , $amount: 10%);
+  }
+  &.m_btn_text {
+    display: inline-block;
+    padding: 10px;
+    color: $themeColor;
+    border: none;
+    background-color: transparent;
+    &:active {
+      background-color: transparent;
+      color: $themeColor;
+    }
+  }
+  &.full {
+    width: 100%;
+  }
+  &:active {
+    background-color: lighten($color: $themeColor, $amount: 10%);
+  }
+}
+
+.m_input_group {
+  margin-bottom: 20px;
+  border: 1px #e3e3e3 solid;
+  border-radius: 4px;
+}
+.m_input_item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  .m_input {
+    flex: 1;
+  }
+  .captcha_btn {
+    margin-left: 10px;
+  }
+}
+// input
+.m_input {
+  box-sizing: border-box;
+  margin: 15px 0;
+  padding: 10px 10px;
+  border-radius: 4px;
+  border: 1px #e3e3e3 solid;
+  &.center {
+    margin: 15px auto;
+  }
+  .m_input_group & {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    border-top: 1px #e3e3e3 solid;
+    &:first-child {
+      border: none;
+    }
+  }
+}
+
+/*选项卡
+---------------------------------------------------------------------------------------------------------------------*/
+// 选项卡
+.m_tab_wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  .m_tab_nav {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    .m_tabs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      height: 36px;
+      font-size: 14px;
+      color: #0B0817;
+      border-bottom: 1px solid $boderColor;
+    }
+  }
+
+  .m_tab_line {
+    position: absolute;
+    width: 50%;
+    bottom: 0;
+    height: 2px;
+    background-color: $themeColor;
+    transition: all .5s;
+  }
+  .m_tab_content {
+    overflow: hidden;
+    width: 100%;
+    padding: 20px 0;
+    &_wrap {
+      display: flex;
+      transition: all .3s;
+      & > div {
+        flex: 1;
+        margin-right: 5px;
+        @extend %flex_column;
+        justify-content: flex-start;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}

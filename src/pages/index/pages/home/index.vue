@@ -1,7 +1,7 @@
 <template>
   <div class="m_wrap">
     <div v-show="!active">
-      <van-nav-bar class="m_header" fixed>
+      <van-nav-bar class="m_header" fixed right-text="全部课程" @click-right="$router.push('./lesson')">
         <p slot="title">我的课程</p>
       </van-nav-bar>
       <srcoll :data="lessonList" class="m_body is_center class">
@@ -37,6 +37,7 @@
               <p>最近一周没有课程哦~</p>
             </div>
           </div>
+          
         </div>
       </srcoll>
     </div>
@@ -57,14 +58,14 @@
       </div>
       <div class="my_body">
         <van-cell-group class="my_cell_group">
-          <van-cell to="/order" clickable is-link>
+          <!-- <van-cell to="/order" clickable is-link>
             <template slot="title">
               <div class="my_cell_content">
                 <i class="cell_icon dd"></i>
-                <span>我的订单</span>
+                <span>我的预约</span>
               </div>
             </template>
-          </van-cell>
+          </van-cell> -->
            <van-cell to="./lesson" clickable is-link>
             <template slot="title">
               <div class="my_cell_content">
@@ -160,7 +161,7 @@ export default {
       }
     },
     phoneNum () {
-      let num = window.localStorage.getItem('phoneNum')
+      let num = this.$store.state.phoneNum
       if (num === '' || !num) {
         return '未绑定手机'
       }

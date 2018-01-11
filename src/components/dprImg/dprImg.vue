@@ -9,6 +9,10 @@ export default {
       type: String,
       default: '',
       required: true
+    },
+    src_3x: {
+      type: String,
+      default: ''
     }
   },
   computed: {

@@ -2,10 +2,15 @@
   <div>
     <div class="m_wrap">
       <van-nav-bar class="m_header" fixed left-arrow @click-left="close">
-        <span slot="title">订单列表</span>
+        <span slot="title">预约列表</span>
       </van-nav-bar>
-      <srcoll class="m_body">
-        <div class="content">
+      <srcoll
+        class="m_body"
+        ref="scroll"
+        :data="orderList"
+        v-if="orderList.length"
+        :pullDownRefresh="!!orderList.length"
+        @pullingDown="getOrderList">
           <div class="loading_content" v-if="show">
             <van-loading style="width: 22px; height: 22px;" type="circle" color="black" />
           </div>
@@ -18,7 +23,6 @@
               <orderItem @hanlerClick="hanlerClick" :key="item.id" :item="item" :index="index" v-for="(item,index) in orderList"></orderItem>
             </div>
           </transition>
-        </div>
       </srcoll>
     </div>
     <transition name="right-in">
@@ -57,8 +61,12 @@
         .then(({data}) => {
           if (!data.staus) {
             this.orderList = data.data.filter((e) => (e.pay_status === 1))
+            this.orderList.concat(this.orderList)
             this.show = false
           }
+          setTimeout(() => {
+            this.$refs.scroll.forceUpdate()
+          }, 500)
         })
       },
        // 获取订单详情

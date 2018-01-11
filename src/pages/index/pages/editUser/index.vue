@@ -276,7 +276,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 16px;
+    padding: 14px 16px;
     margin-bottom: 12px;
     background-color: #fff;
   }
@@ -306,7 +306,7 @@
   }
 
   .m_btn {
-    margin-top: 20px;
+    margin-top: 10px;
   }
 </style>
 

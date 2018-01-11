@@ -1,10 +1,11 @@
 <template>
-  <div class="m_wrap d_login">
+  <div class="m_wrap d_login" ref="wrap">
+    <div v-if="maskVisiable" style="background:#fff;position: fixed;left:0;right:0;bottom:0;top:0;z-index:999999;"></div>
     <van-nav-bar class="m_header border0" fixed>
     </van-nav-bar>
 
     <div class="m_body d_login_content">
-      <h2 class="d_login_content_title">登陆叮叮云教室</h2>
+      <h2 class="d_login_content_title">登录叮叮云教室</h2>
       <div class="m_tab_wrapper">
         <div class="m_tab_nav" >
           <a class="m_tabs" @click="changeActive(0)">验证码登陆</a>
@@ -25,7 +26,7 @@
                 <input class="m_input" v-model="mobile" type="text" placeholder="手机号">
                 <input class="m_input" v-model="password" type="password" placeholder="密码">
               </div>
-              <a class="m_btn full" @click="login"><span>登陆</span></a>
+              <a class="m_btn full" @click="login"><span>登录</span></a>
               <router-link to="/reset" class="m_btn m_btn_text wjmm_btn">忘记密码？</router-link>
             </div>
           </div>
@@ -68,7 +69,8 @@ export default {
       password: '',
       visiable: false,
       registerVisiable: false,
-      isRegister: false
+      isRegister: false,
+      maskVisiable: true
     }
   },
   created () {
@@ -77,9 +79,14 @@ export default {
       this.captchaLogin({mobile: m, key: k})
     } else if (p && m && (p !== '')) {
       this.passLogin(m, p, '自动登录失败')
+    } else {
+      this.maskVisiable = false
     }
   },
   methods: {
+    refresh () {
+      this.refreshing = true
+    },
     changeMobile (n) {
       this.mobile = n
     },
@@ -112,12 +119,12 @@ export default {
             obj.password = v.password
           }
           window.localStorage.setItem('phoneNum', mobile)
+          this.$store.commit('UPLOAD_PHONE_NUM', mobile)
           this.$store.commit('UPLOAD_USER_INFO', data.data)
           let info = JSON.parse(JSON.stringify(Object.assign(data.data, obj)))
           if (window.dsBridge) {
-            let arr = []
             let res = window.dsBridge.call('doInfoClick', info)
-            res && arr.push(res)
+            res && console.log(res)
           }
         }
       })
@@ -154,6 +161,7 @@ export default {
           }
           this.loginFn({mobile: obj.mobile, ...data.data})
         } else {
+          this.maskVisiable = false
           this.$dialog.alert({
             title: '提示',
             message: data.message
@@ -179,6 +187,7 @@ export default {
           }
           this.loginFn({token: data.data, mobile, password})
         } else {
+          this.maskVisiable = false
           this.$dialog.alert({
             title: text,
             message: data.message

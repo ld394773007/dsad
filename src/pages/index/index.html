@@ -11,34 +11,44 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <title>叮叮云教室</title>
-    <style>
-      #qdt {
-        position: fixed;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        background: url('/static/images/qd@2x.jpg') no-repeat center;
-        background-size: 100%;
-        -webkit-transition: all .3s;
-        transition: all .3s;
-        opacity: 1;
-      }
-      @media (-webkit-min-device-pixel-ratio:3), (min-device-pixel-ratio:3) {
-        #qdt {
-          background: url('/static/images/qd@3x.jpg') no-repeat center;
-          background-size: 100%
-        }
-      }
-      .hide {
-        opacity: 0;
-        z-index: -1000;
-      }
-    </style>
+    <script>
+      (function () {
+          var docEl = document.documentElement;
+          var isMobile = window.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobi/i.test(navigator.userAgent);
+
+          function setScale() {
+              var pageScale = 1;
+
+              if (window.top !== window) {
+                  return pageScale;
+              }
+
+              var width = docEl.clientWidth || 375;
+              var height = docEl.clientHeight || 667;
+
+              if (width / height > 375 / 667) {
+                  // 高度优先
+                  pageScale = height / 667;
+              } else {
+                  pageScale = width / 375;
+              }
+
+              var content = 'width=' + 375 + ', initial-scale=' + pageScale
+                + ', maximum-scale=' + pageScale + ', user-scalable=no';
+              document.querySelector('meta[name=viewport]').setAttribute('content', content);
+
+              window.pageScale = pageScale;
+          }
+          if (isMobile) {
+              setScale();
+          } else {
+              docEl.className += ' pc';
+          }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>
-    <div id="qdt"></div>
     <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
     <script src="https://unpkg.com/vant/lib/vant.min.js"></script>
     <script src="https://cdn.bootcss.com/vuex/3.0.1/vuex.min.js"></script>

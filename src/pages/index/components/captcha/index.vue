@@ -130,8 +130,8 @@ export default {
         accountType: 'parent',
         realname: realname,
         school: '未填',
-        password: mobile.slice(-7),
-        repassword: mobile.slice(-7)
+        password: mobile.slice(-8),
+        repassword: mobile.slice(-8)
       })
       .then(({data}) => {
         this.$toast.clear()

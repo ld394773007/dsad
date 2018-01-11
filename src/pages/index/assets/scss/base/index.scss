@@ -133,7 +133,7 @@ textarea {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 30px;
+  padding: 10px 20px;
   border: none;
   border-radius: 4px;
   font-size: 14px;
@@ -192,7 +192,7 @@ textarea {
       justify-content: center;
       flex: 1;
       height: 36px;
-      font-size: 12px;
+      font-size: 14px;
       color: #0B0817;
       border-bottom: 1px solid lighten($color: $border_color, $amount: 20%);
     }
@@ -264,6 +264,7 @@ textarea {
   right: 0;
   height: 60px;
   border-top: 1px #e3e3e3 solid;
+  z-index: 999px;
 }
 
 .price {

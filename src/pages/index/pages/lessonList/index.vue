@@ -6,13 +6,20 @@
     <div class="m_body">
       <van-tabs :active="active">
         <van-tab title="待上课程">
-          <srcoll class="srcoll_content">
+          <srcoll
+            v-if="lessonList"
+            :data="lessonList"
+            ref="scroll"
+            class="srcoll_content"
+            :pullDownRefresh="!!lessonList.length"
+            @pullingDown="onPullingDown(1)"
+          >
             <div class="content">
               <div class="loading_content" v-if="show">
                 <van-loading style="width: 22px; height: 22px;" type="circle" color="black" />
               </div>
               <transition name="bottom-go">
-                <div v-if="!show" style="padding: 15px;">
+                <div v-if="!show" class="w100">
                   <div class="no_lesson" v-if="!lessonList.length">
                     <i class="icon_no_lesson"></i>
                     <p>没有待上的课程哦~</p>
@@ -24,13 +31,18 @@
           </srcoll>
         </van-tab>
         <van-tab title="结束课程">
-          <srcoll class="srcoll_content">
+          <srcoll ref="scroll1"
+            v-if="end_lessonList"
+            class="srcoll_content"
+            :data="end_lessonList"
+            :pullDownRefresh="!!end_lessonList.length"
+            @pullingDown="onPullingDown(2)">
             <div class="content">
               <div class="loading_content" v-if="show">
                 <van-loading style="width: 22px; height: 22px;" type="circle" color="black" />
               </div>
               <transition name="bottom-go">
-                <div v-if="!show" style="padding: 15px;">
+                <div v-if="!show" class="w100" style="padding: 15px;">
                   <div class="no_lesson" v-if="!end_lessonList.length">
                     <i class="icon_no_lesson"></i>
                     <p>没有已经结束的课程哦~</p>
@@ -55,21 +67,27 @@
     data () {
       return {
         show: true,
-        lessonList: [],
-        end_lessonList: []
+        lessonList: null,
+        end_lessonList: null,
+        pullDownRefreshTxt: '加载成功'
       }
     },
     created () {
       this.getList()
     },
     methods: {
+      onPullingDown (v) {
+        this.getList(v)
+      },
       close () {
         this.$router.go(-1)
       },
       // 获取列表
-      async getList () {
+      async getList (v) {
+        let _t = new Date().getTime() + (1000 * 60 * 60 * 24 * 360)
         let t = new Date().getTime() - (1000 * 60 * 60 * 24 * 30)
         let time = formatTime(new Date(t), 'YYYY-MM-DD HH:mm:ss')
+        let _time = formatTime(new Date(_t), 'YYYY-MM-DD HH:mm:ss')
         let {
           get
         } = this.$axios
@@ -77,6 +95,7 @@
         await get('/v1/student-lesson/list?expand=course,teacher,assistant,image,room', {
           params: {
             startTime: time,
+            endTime: _time,
             pageSize: 100
           }
         })
@@ -96,10 +115,13 @@
                   lessonList.push(e)
                 }
               })
-
-              lessonList.length && (this.lessonList = lessonList)
-              endLessonList.length && (this.end_lessonList = endLessonList)
+              !lessonList.length ? (this.lessonList = []) : (this.lessonList = lessonList)
+              !endLessonList.length ? (this.end_lessonList = []) : (this.end_lessonList = endLessonList)
             }
+            setTimeout(() => {
+              v === 1 && this.$refs.scroll.forceUpdate()
+              v === 2 && this.$refs.scroll1.forceUpdate()
+            }, 500)
           })
 
         this.show = false
@@ -114,7 +136,11 @@
 <style lang="scss" scoped>
 @import '../../assets/scss/minix/index';
 .srcoll_content {
+  width: 100vw;
   height: calc(100vh - 90px);
+}
+.w100 {
+  padding: 15px;
 }
 .loading_content {
   padding: 10px;

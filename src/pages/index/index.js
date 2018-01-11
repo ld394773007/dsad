@@ -12,9 +12,9 @@ import VueQriously from 'vue-qriously'
 import dprImg from '@/components/dprImg'
 import 'vant/lib/vant-css/index.css'
 import './assets/scss/index.scss'
-import textField from 'muse-components/textField'
+import refreshControl from 'muse-components/refreshControl'
 // ..
-Vue.component(textField.name, textField)
+Vue.component(refreshControl.name, refreshControl)
 
 Vue.use(VueQriously)
 Vue.use(dprImg)

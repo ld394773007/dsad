@@ -5,7 +5,7 @@
     </van-nav-bar>
     <srcoll :data="data" class="m_body" style="background-color: #fff;">
       <div class="m_tab_content">
-        <ul class="content">
+        <ul class="content outline_content">
           <li :key="item.id" v-for="(item, index) in data">
             <p><i>{{index + 1}}.</i>{{item.name}}</p>
             <span>{{formatTime(item.start_time)}}</span>
@@ -36,3 +36,25 @@
     }
   }
 </script>
+<style lang="scss" scoped>
+.outline_content {
+  padding: 16px 26px;
+}
+.outline_content >li {
+  margin-bottom: 16px;
+  line-height: 34px;
+  p {
+    font-size: 16px;
+  }
+  i {
+    display: inline-block;
+    width: 40px;
+  }
+  span {
+    margin-left: 40px;
+    margin-bottom: 12px;
+    display: block;
+    color: #ADADBD;
+  }
+}
+</style>
