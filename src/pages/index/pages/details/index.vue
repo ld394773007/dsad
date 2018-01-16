@@ -85,6 +85,15 @@
       <QRcode style="z-index:10;" key="QRcode" @success="success" v-if="QRcode !== ''" @close="QRcode = ''" :code="QRcode" :id="orderId" />
       <payResult style="z-index:11;" key="payResult" v-if="visiableResult" :data="detailData" :startTime="formatStartTime" :price="toDecimal2(getNum(detailData.price))"></payResult>
     </transition-group>
+    <div v-if="download_mask" class="download_mask" @click="download_mask = false">
+      <div class="download_mask_header">
+        <div>
+          <p>请点击右上角菜单</p>
+          <p>在 默认浏览器 或 Safari 中打开</p>
+        </div>
+        <i></i>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -116,7 +125,8 @@
         orderId: 0,
         QRcode: '',
         payList: [],
-        pay_code: ''
+        pay_code: '',
+        download_mask: false
       }
     },
     computed: {
@@ -147,11 +157,20 @@
     },
     methods: {
       download () {
-        if (ismobile(0) === '0') {
-
+        let {is_weixin} = this
+        if (is_weixin()) {
+          this.download_mask = true
         } else {
-          window.location = 'http://www.yingyushu.com/app_download/ding.apk'
+          if (ismobile(0) === '0') {
+
+          } else {
+            window.location = 'http://www.yingyushu.com/app_download/ding.apk'
+          }
         }
+      },
+      is_weixin () {
+        var ua = window.navigator.userAgent.toLowerCase()
+        return /MicroMessenger/i.test(ua)
       },
       formatTime (t) {
         let time = formatTime(new Date(t * 1000), 'YYYY-MM-DD HH:mm').split(' ')
@@ -209,7 +228,6 @@
       // 获取课程列表
       getLesson (id) {
         let {get} = this.$shopApi
-
         get('/v1/product/get-lessons', {
           params: {courseId: id}
         }).then(({data}) => {
@@ -232,14 +250,14 @@
           if (!data.status) {
             this.detailData = data.data
             this.getLesson(data.data.link.id)
+            let name = document.getElementById('name')
             let title = document.getElementById('title')
-            let img = document.getElementById('image')
             let description = document.getElementById('description')
 
             // 设置页面分享信息
+            name.innerText = data.data.pro_name
             title.setAttribute('content', data.data.pro_name)
-            img.setAttribute('content', data.data.thumb_src)
-            description.setAttribute('content', data.data.pro_brief)
+            description.setAttribute('content', formatTime(new Date(data.data.link.start_time), 'YYYY年MM月DD日') + '开始上课')
           }
         })
       },
@@ -432,6 +450,13 @@
           }
         })
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        if (vm.$axios.defaults.headers.Authorization && from.path === '/payLogin') {
+          vm.clearChart()
+        }
+      })
     }
   }
 </script>

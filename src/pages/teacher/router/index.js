@@ -5,22 +5,27 @@ Vue.use(VueRouter)
 
 export default new VueRouter({
   routes: [
-    // {
-    //   path: '/home',
-    //   name: 'home',
-    //   component: () => import('../pages/home')
-    // },
+    {
+      path: '/home',
+      name: 'home',
+      component: () => import('../pages/home')
+    },
     {
       path: '/login',
       name: 'login',
       component: () => import('../pages/login')
-    }
+    },
     // 找回密码
-    // {
-    //   path: '/reset',
-    //   name: 'reset',
-    //   component: () => import('../pages/resetPass')
-    // },
+    {
+      path: '/reset',
+      name: 'reset',
+      component: () => import('../pages/resetPass')
+    },
+    {
+      path: '/addLesson',
+      name: 'addLesson',
+      component: () => import('../pages/addLesson')
+    }
     // {
     //   path: '/editUser',
     //   name: 'editUser',

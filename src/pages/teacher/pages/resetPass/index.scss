@@ -1,0 +1,19 @@
+@import '../../assets/scss/theme/index';
+
+.form_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 350px;
+}
+
+.title {
+  margin-top: 64px;
+  margin-bottom: 40px;
+  font-size: 24px;
+  font-weight: normal;
+  text-align: center;
+  color: $themeColor;
+}

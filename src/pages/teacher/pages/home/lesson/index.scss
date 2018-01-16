@@ -1,0 +1,190 @@
+@import '../../../assets/scss/minix/index';
+@import '../../../assets/scss/theme/index';
+
+.header {
+  box-sizing: border-box;
+  padding-left: 28px;
+  padding-right: 19px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  height: 156px;
+  @include dprImg('top_back');
+  background-size: 100%;
+}
+
+.logo {
+  display: flex;
+  align-self: center;
+  &_img {
+    margin-right: 16px;
+    display: block;
+    width: 48px;
+    height: 48px;
+    @include dprImg('icon_dd');
+    background-size: 100%;
+  }
+  &_text {
+    font-size: 14px;
+    span {
+      color: rgba(255, 255, 255, .4);
+    }
+    p {
+      font-size: 20px;
+      color: #fff;
+    }
+  }
+  &_icon {
+    margin-top: 3px;
+    display: block;
+    width: 88px;
+    height: 26px;
+    @include dprImg('teacher_icon');
+    background-size: 100%;
+  }
+}
+
+.left {
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  div {
+    height: 29px;
+    box-sizing: border-box;
+    padding: 5px;
+    @extend %flex;
+    justify-content: space-between;
+    color: #fff;
+    border: 1px #b1c291 dashed;
+    background-color: rgba(255, 255, 255, .15);
+    font-size: 13px;
+    border-radius: 2px;
+    i {
+      display: flex;
+      align-items: center;
+      height: 29px;
+    }
+    .arrow_left {
+      padding-right: 10px;
+    }
+    .arrow {
+      padding-left: 10px;
+    }
+    &.year {
+      width: 157px;
+    }
+    &.month {
+      width: 92px;
+      margin: 0 28px;
+    }
+    &.today {
+      justify-content: center;
+      width: 82px;
+    }
+  }
+}
+
+.content {
+  position: absolute;
+  padding: 20px;
+  top: 156px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-top-left-radius: 18px;
+  background-color: #f6f7f9;
+  overflow: hidden;
+  .calendar {
+    background-color: #fff;
+  }
+  .content_title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    font-size: 18px;
+    color: $themeColor;
+  }
+}
+
+.lesson_item {
+  padding: 15px;
+  border-bottom: 1px #E5E5EE solid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #0B0817;
+  .lesson_info {
+    width: 100%;
+  }
+  .lesson_title {
+    font-size: 20px;
+    i {
+      margin-right: 3px;
+      color: $themeColor;
+    }
+  }
+  .lesson_course {
+    display: block;
+    margin: 10px 0;
+    color: #ADADBD;
+  }
+  .lesson_time {
+    color: #F76B1C;
+  }
+  .lesson_btn {
+    margin-top: 15px;
+    width: 80%;
+  }
+
+}
+
+.lesson_on {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #0B0817;
+  p {
+    margin-top: 15px;
+  }
+}
+
+.content_nav {
+  margin-top: 29px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  li {
+    text-align: center;
+  }
+  &_icon {
+    display: block;
+    width: 58px;
+    height: 58px;
+    text-align: center;
+    margin-bottom: 5px;
+    &.kxk {
+      @include dprImg('new_course');
+      background-size: 100%;
+    }
+    &.kmfk {
+      @include dprImg('free_class');
+      background-size: 100%;
+    }
+    &.lsjk {
+      @include dprImg('add_classes');
+      background-size: 100%;
+    }
+  }
+}
+
+

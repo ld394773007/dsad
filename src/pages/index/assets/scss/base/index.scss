@@ -98,6 +98,38 @@ textarea {
   }
 }
 
+.download_mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 9999999999;
+  color: #fff;
+  &_header {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba($color: #000000, $alpha: .7);
+    padding: 30px 20px;
+  }
+  i {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    width: 24px;
+    height: 24px;
+    @include dprImg('poiter');
+    background-size: 100%;
+    background-repeat: no-repeat;
+  }
+}
 
 .m_input_group {
   margin-bottom: 20px;

@@ -17,9 +17,52 @@ textarea {
     border: 0; /* 方法1 */
     -webkit-appearance: none; /* 方法2 */
 }
+
+.van-dialog {
+  max-width: 350px;
+  .van-dialog__content {
+    text-align: center;
+  }
+}
+
+.m_wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #fff;
+}
+
+.m_body {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.w100 {
+  width: 100%;
+}
+
+.el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
+  margin-left: 0;
+}
+
+.rate {
+  margin-top: 10px;
+  .el-rate__icon {
+    font-size: 24px;
+  }
+}
+
+
+
 // 动画
 .right-in-enter-active, .right-in-leave-active {
-  transition: all .3s
+  transition: all 20s
 }
 .right-in-enter, .right-in-leave-to /* .right-in-leave-active 在低于版本 2.1.8 中 */ {
   transform: translateX(100%)
@@ -31,6 +74,36 @@ textarea {
 .bottom-go-enter, .bottom-go-leave-to /* .right-in-leave-active 在低于版本 2.1.8 中 */ {
   opacity: 0;
   transform: translateY(10%)
+}
+
+.forward-enter-active,
+.forward-leave-active {
+  transition: all .5s
+}
+
+.forward-enter {
+  transform: translateX(100%);
+}
+.forward-leave-to {
+  transform: translateX(-20%);
+  opacity: 0;
+}
+
+.black-enter-active,
+.black-leave-active {
+  transition: all .5s;
+  z-index: 0;
+}
+
+.black-enter {
+  transform: translateX(-30%);
+  opacity: .2;
+}
+.black-leave,
+.black-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+  z-index: 9;
 }
 
 .m_validate_input {
@@ -117,11 +190,12 @@ textarea {
 }
 .m_input_item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-end;
   width: 100%;
   .m_input {
     flex: 1;
+    margin-top: 0;
   }
   .captcha_btn {
     margin-left: 10px;
@@ -202,4 +276,32 @@ textarea {
       }
     }
   }
+}
+
+
+.fixed_bottom_content {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  border-top: 1px #e3e3e3 solid;
+  z-index: 999px;
+}
+
+
+/*最外层容器
+------------------------------------------------------------------------------------------*/
+.m_view
+.pages,
+.page {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #fff;
 }

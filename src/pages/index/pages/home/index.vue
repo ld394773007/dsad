@@ -6,6 +6,7 @@
       </van-nav-bar>
       <srcoll :data="lessonList" class="m_body is_center class">
         <div class="content">
+
           <p class="h_title">今日课程</p>
           <span class="h_subtitle">{{lessonList.todayLesson.length}}节课</span>
           <div>
@@ -37,7 +38,7 @@
               <p>最近一周没有课程哦~</p>
             </div>
           </div>
-          
+
         </div>
       </srcoll>
     </div>

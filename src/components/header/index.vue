@@ -1,12 +1,12 @@
 <template>
   <div class="y_header" :class="{'fixed': fixed}">
-    <div class="y_header_left">
+    <div class="y_header_left" @click="handlerClick(0)">
       <slot name="left"></slot>
     </div>
     <div class="y_header_center">
       <slot></slot>
     </div>
-    <div class="y_header_left">
+    <div class="y_header_right" @click="handlerClick(1)">
       <slot name="right" ></slot>
     </div>
   </div>
@@ -18,6 +18,15 @@ export default {
     fixed: {
       type: Boolean,
       default: false
+    }
+  },
+  methods: {
+    handlerClick (v) {
+      if (v === 0) {
+        this.$emit('click-left')
+      } else {
+        this.$emit('click-right')
+      }
     }
   }
 }
@@ -42,6 +51,7 @@ export default {
   &_left,
   &_right {
     flex: 1;
+    height: 50px;
   }
   &_left {
     display: flex;
@@ -53,7 +63,7 @@ export default {
     justify-content: flex-end;
   }
   &_center {
-    flex: 2;
+    flex: 6;
     text-align: center;
     font-size: 18px;
   }
