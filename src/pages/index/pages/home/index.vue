@@ -1,39 +1,44 @@
 <template>
   <div class="m_wrap">
-    <div v-show="!active">
+    <div v-if="!active">
       <van-nav-bar class="m_header" fixed right-text="全部课程" @click-right="$router.push('./lesson')">
         <p slot="title">我的课程</p>
       </van-nav-bar>
-      <srcoll :data="lessonList" class="m_body is_center class">
+      <srcoll
+        ref="scroll"
+        class="m_body is_center class"
+        :pullDownRefresh="true"
+        @pullingDown="onPullingDown"
+      >
         <div class="content">
 
           <p class="h_title">今日课程</p>
-          <span class="h_subtitle">{{lessonList.todayLesson.length}}节课</span>
+          <span class="h_subtitle">{{lessonList[0].length}}节课</span>
           <div>
             <lesson-item
               :key="item.id"
               :item="item"
               :index="index"
-              v-for="(item, index) in lessonList.todayLesson"
-              v-if="lessonList.todayLesson.length"
+              v-for="(item, index) in lessonList[0]"
+              v-if="lessonList[0].length"
             ></lesson-item>
-            <div class="no_lesson" v-if="!lessonList.todayLesson.length">
+            <div class="no_lesson" v-if="!lessonList[0].length">
               <i class="icon_no_lesson"></i>
               <p>今天没有课程哦~</p>
             </div>
           </div>
           <p class="h_title">近期课程</p>
-          <span class="h_subtitle">{{lessonList.nextLesson.length}}节课</span>
+          <span class="h_subtitle">{{lessonList[1].length}}节课</span>
           <div>
 
             <lessonItem
               :key="item.id"
               :item="item"
               :index="index"
-              v-for="(item, index) in lessonList.nextLesson"
-              v-if="lessonList.nextLesson.length"
+              v-for="(item, index) in lessonList[1]"
+              v-if="lessonList[1].length"
             ></lessonItem>
-            <div class="no_lesson" v-if="!lessonList.nextLesson.length">
+            <div class="no_lesson" v-if="!lessonList[1].length">
               <i class="icon_no_lesson"></i>
               <p>最近一周没有课程哦~</p>
             </div>
@@ -46,7 +51,7 @@
       <div class="my_header">
         <router-link to="/editUser" class="my_avater">
           <div class="my_avater_img">
-            <img :src="userInfo.avater">
+            <img :src="avater">
           </div>
         </router-link>
         <div class="my_info_wrap">
@@ -85,7 +90,7 @@
               </div>
             </template>
           </van-cell>
-           <van-cell clickable value="v1.0.0">
+           <van-cell clickable :value="'v' + version" @click="checkVersion" is-link>
             <template slot="title">
               <div class="my_cell_content">
                 <i class="cell_icon bb"></i>
@@ -95,7 +100,7 @@
           </van-cell>
         </van-cell-group>
         <van-cell-group class="my_cell_group">
-          <van-cell title="关于叮叮云教室" is-link/>
+          <van-cell title="关于叮叮云教室" to="/about" is-link/>
         </van-cell-group>
       </div>
     </div>
@@ -134,6 +139,38 @@ export default {
     }
   },
   methods: {
+    checkVersion () {
+      this.$toast.loading()
+      if (window.dsBridge) {
+        let res = window.dsBridge.call('doUpdateClick')
+        if (res) {
+          this.$toast.clear()
+        }
+      }
+    },
+    onPullingDown () {
+      this.getLesson()
+    },
+    getLesson () {
+      let {get} = this.$axios
+      let _t = new Date().getTime() + (1000 * 60 * 60 * 24 * 360)
+      let t = new Date().getTime() - (1000 * 60 * 60 * 24 * 30)
+      let time = formatTime(new Date(t), 'YYYY-MM-DD HH:mm:ss')
+      let _time = formatTime(new Date(_t), 'YYYY-MM-DD HH:mm:ss')
+      get('/v1/student-lesson/list?expand=course,teacher,assistant,image,room', {
+        params: {
+          startTime: time,
+          endTime: _time,
+          pageSize: 100
+        }
+      })
+      .then(({data}) => {
+        if (!data.status) {
+          this.$store.commit('UPDATE_LESSON_LIST', data.data)
+        }
+        this.$refs.scroll.forceUpdate()
+      })
+    },
     formatNum (n) {
       let numList = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
       return numList[n]
@@ -142,6 +179,17 @@ export default {
   computed: {
     userInfo () {
       return this.$store.state.userInfo
+    },
+    version () {
+      return this.$store.state.version
+    },
+    avater () {
+      let {userInfo} = this
+      if (this.userInfo.sex === 1) {
+        return userInfo.avater && userInfo.avater !== '' ? userInfo.avater : '/static/images/avater/avater_boy@3x.png'
+      } else {
+        return userInfo.avater && userInfo.avater !== '' ? userInfo.avater : '/static/images/avater/avater_gril@3x.png'
+      }
     },
     lessonList () {
       let lessonList = this.$store.state.lessonList
@@ -156,10 +204,13 @@ export default {
           nextLesson.push(e)
         }
       })
-      return {
+      setTimeout(() => {
+        lessonList.length && this.$refs.scroll.refresh()
+      }, 500)
+      return [
         todayLesson,
         nextLesson
-      }
+      ]
     },
     phoneNum () {
       let num = this.$store.state.phoneNum
@@ -364,6 +415,11 @@ export default {
     height: 52px;
     @include dprImg('class_kong');
     background-size: 100%;
+  }
+}
+@media only screen and (-webkit-device-pixel-ratio: 3) and (device-height: 812px) and (device-width: 375px) {
+  .my_header {
+      padding-top: 44px;
   }
 }
 </style>

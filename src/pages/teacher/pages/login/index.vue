@@ -1,54 +1,49 @@
 <template>
   <div class="page">
-    <y-header>
-      <p>登陆</p>
-    </y-header>
-    <div class="container">
-      <div class="logo">
-        <img class="logo_img" :src="logoImg">
-        <p class="logo_title">叮叮云教室</p>
-        <span class="logo_tag"></span>
-      </div>
-      <div class="m_tab_wrapper">
-        <div class="m_tab_nav" >
-          <a class="m_tabs" @click="changeActive(0)">验证码登陆</a>
-          <a class="m_tabs" @click="changeActive(1)">密码登陆</a>
-          <i class="m_tab_line" :style="{'left': left}"></i>
+      <div class="container">
+        <div class="logo">
+          <img class="logo_img" src="/static/images/icon2.png">
+          <p class="logo_title">叮叮云教室</p>
+          <span class="logo_tag"></span>
         </div>
-        <div class="m_tab_content">
-          <div class="m_tab_content_wrap" :style="style">
-            <div>
-              <div class="m_validate_input" >
-                <span>+86</span>
-                <input ref="input" v-model="mobile" type="tel" placeholder="手机号">
+        <div class="m_tab_wrapper">
+          <div class="m_tab_nav" >
+            <a class="m_tabs" @click="changeActive(0)">验证码登陆</a>
+            <a class="m_tabs" @click="changeActive(1)">密码登陆</a>
+            <i class="m_tab_line" :style="{'left': left}"></i>
+          </div>
+          <div class="m_tab_content">
+            <div class="m_tab_content_wrap" :style="style">
+              <div>
+                <div class="m_validate_input" >
+                  <span>+86</span>
+                  <input ref="input" v-model="mobile" type="tel" placeholder="手机号">
+                </div>
+                <div class="m_input_item">
+                  <input class="m_input" type="text" v-model="captcha" placeholder="验证码">
+                  <a :class="{'m_btn_disabled': disabled}" @click="send" class="m_btn m_btn_danger captcha_btn">{{captchaBtnText}}</a>
+                </div>
+                <a :class="{'m_btn_disabled': capBtnDis}" class="m_btn full send_cap" @click="_captchaLogin">登录</a>
               </div>
-              <div class="m_input_item">
-                <input class="m_input" type="text" v-model="captcha" placeholder="验证码">
-                <button :disabled="disabled" :class="{'m_btn_disabled': disabled}" @click="send" class="m_btn m_btn_danger captcha_btn">{{captchaBtnText}}</button>
+              <div>
+                <div class="m_input_group">
+                  <input class="m_input" v-model="mobile" type="tel" placeholder="手机号">
+                  <input class="m_input" v-model="password" type="password" placeholder="密码">
+                </div>
+                <a :class="{'m_btn_disabled': passBtnDis}" class="m_btn full" @click="_login">登录</a>
+                <a @click="resetShow" class="m_btn m_btn_text wjmm_btn">忘记密码？</a>
               </div>
-              <button :disabled="capBtnDis" :class="{'m_btn_disabled': capBtnDis}" class="m_btn full send_cap" @click="captchaLogin"><span style="color: #fff; margin-bottom:0;">登录</span></button>
-            </div>
-            <div>
-              <div class="m_input_group">
-                <input class="m_input" v-model="mobile" type="tel" placeholder="手机号">
-                <input class="m_input" v-model="password" type="password" placeholder="密码">
-              </div>
-              <button :disabled="passBtnDis" :class="{'m_btn_disabled': passBtnDis}" class="m_btn full" @click="login"><span>登录</span></button>
-              <router-link to="/reset" class="m_btn m_btn_text wjmm_btn">忘记密码？</router-link>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 </template>
 <script>
-import logoImg from '../../assets/imgs/icon_dd@3x.png'
 export default {
   name: 'login',
   data () {
     return {
-      logoImg: logoImg,
       active: 0,
       mobile: '',
       password: '',
@@ -57,6 +52,9 @@ export default {
       countDownTime: 60,
       phoneReg: /^(0|86|17951)?(13[0-9]|15[012356789]|17[0-9]|18[0-9]|14[57])[0-9]{8}$/
     }
+  },
+  created () {
+    window.sessionStorage.removeItem('homeActive')
   },
   computed: {
     left () {
@@ -83,10 +81,14 @@ export default {
     }
   },
   methods: {
+    resetShow () {
+      this.$emit('reset')
+    },
     changeActive (v) {
       this.active = v
     },
     send () {
+      if (this.disabled) return
       let {mobile, phoneReg, $toast, sendCaptcha} = this
       if (mobile === '') {
         $toast('手机号不能为空！')
@@ -99,78 +101,22 @@ export default {
       $toast.loading()
       sendCaptcha(1)
     },
-    loginSuc (data) {
-      this.$axios.defaults.headers = {
-        Authorization: 'Bearer ' + data.token
-      }
-      this.getUserInfo(data)
-    },
-    getUserInfo (v) {
-      let {get} = this.$axios
-      get('/v1/member/profile')
-      .then(({data}) => {
-        if (!data.status) {
-          this.$store.commit('UPDATE_USER_INFO', data.data)
-          let {mobile, token} = v
-          let obj = {
-            mobile,
-            token
-          }
-          if (v.key) {
-            obj.key = v.key
-          } else if (v.password) {
-            obj.password = v.password
-          }
-          console.log(obj)
-          this.$router.push('/home')
-          let info = JSON.parse(JSON.stringify(Object.assign(data.data, obj)))
-          if (window.dsBridge) {
-            let res = window.dsBridge.call('doInfoClick', info)
-            res && console.log(res)
-          }
-        }
-      })
-    },
-    captchaLogin () {
+    _captchaLogin () {
+      if (this.capBtnDis) return
       let {mobile, captcha} = this
-      let {post} = this.$axios
-      this.$toast.loading()
-      post('/v1/user/sms-login', {
+      this.$emit('captchaLogin', {
         mobile,
         captcha,
         accountType: 'teacher'
       })
-      .then(({data}) => {
-        this.$toast.clear()
-        if (!data.status) {
-          this.loginSuc({mobile, ...data.data})
-        } else {
-          this.$dialog.alert({
-            title: '提示',
-            message: data.message
-          })
-        }
-      })
     },
-    login () {
-      this.$toast.loading()
+    _login () {
+      if (this.passBtnDis) return
       let {mobile, password} = this
-      let {post} = this.$axios
-      post('/v1/user/login', {
+      this.$emit('login', {
         mobile,
         password,
         accountType: 'teacher'
-      })
-      .then(({data}) => {
-        this.$toast.clear()
-        if (!data.status) {
-          this.loginSuc({token: data.data, mobile, password})
-        } else {
-          this.$dialog.alert({
-            title: '提示',
-            message: data.message
-          })
-        }
       })
     },
     sendCaptcha (check) {
@@ -212,6 +158,9 @@ export default {
 @import './index.scss';
 .m_tab_wrapper {
   width: 100%;
+}
+.send_cap {
+  margin-top: 20px;
 }
 </style>
 

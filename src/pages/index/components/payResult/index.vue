@@ -18,35 +18,16 @@
         </div> -->
       </div>
     </div>
-    <a @click="download" class="download_btn">去下载叮叮云教室App</a>
-    <div v-if="download_mask" class="download_mask" @click="download_mask = false">
-      <div class="download_mask_header">
-        <div>
-          <p>请点击右上角菜单</p>
-          <p>在 默认浏览器 或 Safari 中打开</p>
-        </div>
-        <i></i>
-      </div>
-    </div>
+    <a @click="$router.push('./download')" class="download_btn">去下载叮叮云教室App</a>
   </div>
 </template>
 <script>
-import {ismobile} from '@/common/js/utils'
 export default {
   name: 'payResult',
   props: ['data', 'startTime', 'price'],
   data () {
     return {
       download_mask: false
-    }
-  },
-  methods: {
-    download () {
-      if (ismobile(0) === '0') {
-
-      } else {
-        window.location = 'http://www.yingyushu.com/app_download/ding.apk'
-      }
     }
   }
 }

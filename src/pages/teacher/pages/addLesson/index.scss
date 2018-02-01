@@ -48,7 +48,7 @@
 }
 
 .content {
-  height: 63vh;
+  height: 61vh;
   margin: 0 44px;
   padding: 34px 54px;
   padding-bottom: 10px;
@@ -61,20 +61,19 @@
   overflow: hidden;
   &.add_lesson_content {
     background-image: none;
+    -webkit-overflow-scrolling: touch;
     overflow-y: auto;
-    height: auto;
-    min-height: 61vh;
   }
   & > span {
     display: block;
-    margin-top: 22px;
+    margin-top: 10px;
     margin-bottom: 9px;
   }
   b {
     font-style: none;
     color: #F76B1C;
   }
-  p {
+  & > p {
     display: flex;
     align-items: center;
     color: #ADADBD;
@@ -114,7 +113,7 @@
     height: 41px;
     width: 480px;
     border-bottom: 1px #E5E5EE solid;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     margin-left: 36px;
   }
   .price_input {
@@ -174,11 +173,18 @@
 }
 
 .add_lesson_btn_wrap {
+  margin-top: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: $themeColor;
   font-size: 18px;
+  & > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 60px;
+  }
   .el-button--text {
     font-size: 18px;
   }
@@ -192,9 +198,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  button {
+  a {
     width: 300px;
-    & + button {
+    & + a {
       margin-left: 15px;
     }
   }
@@ -217,5 +223,93 @@
   }
   .ewm_content {
 
+  }
+}
+
+.popup_btn_wrap {
+  border-top: 1px #E5E5EE solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  a {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0;
+  }
+  .confirm {
+    color: $themeColor;
+    border-left: 1px #E5E5EE solid;
+  }
+}
+
+.calender_text {
+  padding-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #000;
+  p {
+    margin-bottom: 15px;
+  }
+  div {
+    width: 90%;
+    text-align: center;
+    margin-bottom: 50px;
+  }
+}
+
+
+.m_clone_popup {
+  border-radius: 5px;
+  & > div{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 500px;
+    height: 500px;
+    span {
+      padding-left: 30px;
+      color: #F76B1C;
+      font-size: 12px;
+    }
+  }
+}
+
+
+.clone_message {
+  text-align: center;
+  padding: 10px;
+}
+.popup_btn_wrap {
+  overflow: hidden;
+}
+
+.clone_list {
+
+  height: 380px;
+  padding: 15px;
+  padding-left: 60px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  li {
+    float: left;
+    padding: 10px 20px;
+    margin: 8px 0;
+    width: 340px;
+    height: 20px;
+    background-color: #dcdfe6;
+    color: #000;
+    border-radius: 50px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+    &.active {
+      border-color: $themeColor;
+      background-color: $themeColor;
+      color: #fff;
+    }
   }
 }

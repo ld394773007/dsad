@@ -25,7 +25,30 @@ textarea {
   }
 }
 
-.m_wrap {
+.m_subtitle {
+  display: flex;
+  align-items: center;
+  color: #ADADBD;
+  font-size: 14px;
+  i {
+    margin-right: 5px;
+    display: block;
+    width: 12px;
+    height: 12px;
+    @include dprImg('name_icon');
+    background-size: 100%;
+    &.date {
+      @include dprImg('classdate_icon');
+      background-size: 100%;
+    }
+    &.xh {
+      @include dprImg('serialnumber_icon');
+      background-size: 100%;
+    }
+  }
+}
+
+.m_wrap, .m_view {
   position: absolute;
   left: 0;
   right: 0;
@@ -36,11 +59,15 @@ textarea {
 
 .m_body {
   position: absolute;
-  top: 50px;
+  top: 80px;
   left: 0;
   right: 0;
   bottom: 0;
   overflow: hidden;
+}
+
+#m_wrap .m_header {
+  margin-top: 30px;
 }
 
 .w100 {
@@ -51,6 +78,11 @@ textarea {
   margin-left: 0;
 }
 
+.el-input.is-disabled .el-input__inner {
+  background-color: #fff;
+  color: #000000;
+}
+
 .rate {
   margin-top: 10px;
   .el-rate__icon {
@@ -58,11 +90,23 @@ textarea {
   }
 }
 
+.van-toast{
+  z-index: 2000;
+}
+
+.van-toast-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 2000;
+}
 
 
 // 动画
 .right-in-enter-active, .right-in-leave-active {
-  transition: all 20s
+  transition: all .3s
 }
 .right-in-enter, .right-in-leave-to /* .right-in-leave-active 在低于版本 2.1.8 中 */ {
   transform: translateX(100%)
@@ -78,32 +122,35 @@ textarea {
 
 .forward-enter-active,
 .forward-leave-active {
-  transition: all .5s
+  transition: all .5s;
+  z-index: 1;
 }
 
 .forward-enter {
   transform: translateX(100%);
+  z-index: 1;
 }
 .forward-leave-to {
   transform: translateX(-20%);
-  opacity: 0;
 }
 
-.black-enter-active,
 .black-leave-active {
-  transition: all .5s;
-  z-index: 0;
+  transition: all .4s;
+  z-index: 99;
+}
+
+.black-enter-active {
+  transition: all .4s;
 }
 
 .black-enter {
-  transform: translateX(-30%);
-  opacity: .2;
+  transform: translateX(-100%);
 }
+
 .black-leave,
 .black-leave-to {
   transform: translateX(100%);
-  opacity: 0;
-  z-index: 9;
+  z-index: 99;
 }
 
 .m_validate_input {
@@ -148,6 +195,7 @@ textarea {
   font-size: 14px;
   color: #fff;
   background-color: $themeColor;
+  text-align: center;
   &.m_btn_danger {
     background-color: #F76B1C;
     &:active {
@@ -204,10 +252,10 @@ textarea {
 // input
 .m_input {
   box-sizing: border-box;
-  margin: 15px 0;
-  padding: 10px 10px;
+  padding: 8.5px 10px;
   border-radius: 4px;
   border: 1px #e3e3e3 solid;
+  font-size: 14px;
   &.center {
     margin: 15px auto;
   }
@@ -304,4 +352,107 @@ textarea {
   top: 0;
   bottom: 0;
   background-color: #fff;
+}
+
+
+.m_mask_wrap, .m_mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 99;
+}
+.m_mask {
+  background-color: rgba($color: #fff, $alpha: .6);
+}
+.m_mask_content {
+  padding: 0 40px;
+  box-sizing: border-box;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 610px;
+  height: 480px;
+  background-color: #fff;
+  z-index: 100;
+  transform: translate3d(-50%, -50%, 0);
+  box-shadow: 0 1px 15px 5px rgba($color: #000, $alpha: .2);
+  border-radius: 5px;
+  font-size: 18px;
+  & > p {
+    text-align: center;
+  }
+}
+
+.select_course {
+  margin-bottom: 20px;
+  & > div {
+    padding-left: 70px;
+    max-height: 220px;
+    overflow: auto;
+  }
+  p {
+    color: #F76B1C;
+    margin-bottom: 10px;
+    margin-top: 15px;
+  }
+  .el-button {
+    margin-left: 10px;
+    margin-bottom: 10px;
+    width: 360px;
+    span {
+      display: block;
+      width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+.m_input_content {
+  margin-bottom: 15px;
+  .input {
+    width: 220px;
+  }
+  .m_subtitle {
+    margin-bottom: 10px;
+  }
+}
+
+.input_content_grade {
+  display: flex;
+  align-items: center;
+  & > span {
+    margin: 0 8px;
+  }
+}
+
+.m_mask_btn {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50px;
+  border-top: 1px #E5E5E5 solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &.confirm {
+      border-left: 1px #E5E5E5 solid;
+      color: $themeColor;
+    }
+  }
+}
+
+.van-toast-wrapper  {
+  z-index: 9999;
 }

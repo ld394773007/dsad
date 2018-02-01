@@ -1,0 +1,209 @@
+@import '../../assets/scss/minix/index';
+@import '../../assets/scss/theme/index';
+.m_content {
+  padding: 24px;
+  margin: 0 44px;
+  left: 44px;
+  right: 44px;
+  background-color: #fff;
+  height: 70vh;
+  border-top-left-radius: 10px;
+  box-shadow: -2px 0 4px 0 rgba($color: #000000, $alpha: .11);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tab {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &_item {
+    margin: 10px 20px;
+    width: 60px;
+    padding: 7px 0;
+    text-align: center;
+    border-bottom: 1px transparent solid;
+    &.active {
+      border-color: $themeColor;
+    }
+  }
+}
+.kcdg {
+  h2 {
+    font-size: 18px;
+    color: $themeColor;
+    margin-bottom: 15px;
+  }
+  .add_btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $themeColor;
+    font-size: 18px;
+    .icon {
+      margin-right: 5px;
+    }
+  }
+  .lesson_item {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .xh {
+      color: #ADADBD;
+      background-color: #fff;
+    }
+    & > i {
+      margin-right: 46px;
+      display: block;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background-color: $themeColor;
+      text-align: center;
+      line-height: 34px;
+      color: #fff;
+    }
+    .status_btn {
+      margin-left: 40px;
+      margin-right: 20px;
+    }
+    .flex_1 {
+      flex: 1;
+    }
+    .flex_1_5 {
+      margin-right: 15px;
+      flex: 1.5;
+    }
+    .flex_2 {
+      flex: 2;
+    }
+  }
+}
+
+.student-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.student-list li{
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 23px;
+  margin-top: 20px;
+  .avater {
+    width: 80px;
+    height: 80px;
+    img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+    }
+  }
+  p {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 5px;
+    font-size: 18px;
+    text-align: center;
+  }
+  i {
+    display: block;
+    width: 8px;
+    height: 10px;
+    @include dprImg('pay_icon');
+    background-size: 100%;
+    &.free {
+      @include dprImg('free_icon');
+    background-size: 100%;
+    }
+  }
+}
+
+.product {
+  padding: 24px 50px;
+  color: #ADADBD;
+  & > span {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
+  .info_text {
+    color: #000000;
+  }
+}
+
+.title_wrap {
+  p {
+    display: flex;
+    align-items: center;
+  }
+  .price {
+    font-size: 24px;
+    color: #F25417;
+    i {
+      margin-top: 8px;
+      font-size: 14px;
+    }
+  }
+  .icon {
+    margin-right: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    width: 28px;
+    height: 28px;
+    @include dprImg('price_icon');
+    background-size: 100%;
+    &.start {
+      @include dprImg('difficulty_icon');
+      background-size: 100%;
+    }
+  }
+}
+
+.mask_wrap, .mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 99999999999;
+}
+.mask {
+  background-color: rgba($color: #000000, $alpha: .6);
+}
+.mask_content {
+  box-sizing: border-box;
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 550px;
+  height: 440px;
+  background-color: #fff;
+  z-index: 999999999999;
+  transform: translate3d(-50%, -50%, 0);
+  font-size: 18px;
+   p {
+     margin-bottom: 30px;
+   }
+}
+
+.mask_btn {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50px;
+  border-top: 1px #E5E5E5 solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

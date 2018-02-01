@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta id="title" itemprop="name" content="">
-    <meta id="image" itemprop="image" content="/static/images/icon_dd@2x.png">
+    <meta id="image" itemprop="image" content="">
     <meta id="description" name="description" itemprop=description content="">
     <meta name="format-detection" content="telephone=no" />
     <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -34,7 +34,7 @@
               }
 
               var content = 'width=' + 375 + ', initial-scale=' + pageScale
-                + ', maximum-scale=' + pageScale + ', user-scalable=no';
+                + ', maximum-scale=' + pageScale + ', user-scalable=no,viewport—fit=cover';
               document.querySelector('meta[name=viewport]').setAttribute('content', content);
 
               window.pageScale = pageScale;
@@ -46,6 +46,7 @@
           }
       })()
     </script>
+
   </head>
   <body>
     <div id="app"></div>

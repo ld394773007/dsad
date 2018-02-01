@@ -36,6 +36,12 @@ textarea {
   }
 }
 
+.loading_content {
+  .van-loading {
+    margin-top: 50px;
+  }
+}
+
 .m_header {
   color: $header_color;
   .van-icon {
@@ -46,7 +52,7 @@ textarea {
 .m_body {
   position: absolute;
   overflow: hidden;
-  top: 47px;
+  top: 46px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -287,7 +293,7 @@ textarea {
 }
 
 .fixed_bottom_content {
-  position: absolute;
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -304,6 +310,27 @@ textarea {
   justify-content: flex-end;
   align-items: center;
   color: #212128;
+}
+
+@media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+  .m_body.is_center {
+    top: 91px;
+    bottom: 74px;
+    &.normal {
+      bottom: 0;
+    }
+  }
+  .van-tabbar {
+    padding-bottom: 24px;
+  }
+  .loading_content {
+    .van-loading {
+      margin-top: 90px;
+    }
+  }
+  .fixed_bottom_content {
+    bottom: 24px;
+  }
 }
 
 /* 课程
@@ -386,6 +413,7 @@ li.van-picker-column--selected {
 
 .van-nav-bar__left {
   padding-right:30px;
+
 }
 
 .van-tab--active {

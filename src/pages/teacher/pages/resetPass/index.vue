@@ -1,7 +1,7 @@
 <template>
-  <div class="pages">
+  <div class="pages" id="m_wrap">
     <div class="page">
-      <y-header @click-left="clickLeft">
+      <y-header class="m_header" @click-left="clickLeft">
         <van-icon name="arrow-left" slot="left" />
         <p>找回密码</p>
       </y-header>
@@ -11,11 +11,11 @@
           <div class="m_input_item">
             <input class="m_input" type="tel" v-model="mobile" placeholder="手机号">
           </div>
-          <div class="m_input_item">
+          <div class="m_input_item" style="margin: 15px 0;">
             <input class="m_input" type="text" v-model="captcha" placeholder="验证码">
             <button :disabled="disabled" :class="{'m_btn_disabled': disabled}" @click="send" class="m_btn m_btn_danger captcha_btn">{{captchaBtnText}}</button>
           </div>
-          <button :disabled="capBtnDis" :class="{'m_btn_disabled': capBtnDis}" class="m_btn full send_cap" @click="handlerNext"><span style="color: #fff; margin-bottom:0;">下一步</span></button>
+          <a :class="{'m_btn_disabled': capBtnDis}" class="m_btn full send_cap" @click="handlerNext">下一步</a>
         </div>
       </div>
       <div v-else>
@@ -27,7 +27,7 @@
           <div class="m_input_item">
             <input class="m_input" type="password" v-model="rePassword" @blur="handlerBlur(rePassword)" placeholder="再次输入新密码">
           </div>
-          <button :disabled="resetBtnDis" :class="{'m_btn_disabled': resetBtnDis}" class="m_btn full send_cap" @click="handlerReset"><span style="color: #fff; margin-bottom:0;">下一步</span></button>
+          <a :class="{'m_btn_disabled': resetBtnDis}" class="m_btn full send_cap" @click="handlerReset">下一步</a>
         </div>
       </div>
     </div>
@@ -64,9 +64,10 @@ export default {
   },
   methods: {
     clickLeft () {
-      this.$router.go(-1)
+      this.$emit('close')
     },
     handlerNext () {
+      if (this.capBtnDis) return
       let {post} = this.$axios
       let {captcha, mobile, $dialog} = this
       post('/v1/user/exam-reset-pwd-sms', {
@@ -90,6 +91,7 @@ export default {
       }
     },
     handlerReset () {
+      if (this.resetBtnDis) return
       let {mobile, captcha, newPassword, rePassword, $toast, $dialog} = this
       let {put} = this.$axios
       if (newPassword.length < 6) {
@@ -115,6 +117,7 @@ export default {
         $toast.clear()
         if (!data.status) {
           $toast.success('重置成功')
+          this.$emit('close')
         } else {
           $dialog.alert({
             title: '提示',
@@ -170,6 +173,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import './index';
+#m_wrap {
+  z-index: 999;
+}
 </style>
 
 

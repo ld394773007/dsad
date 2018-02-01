@@ -10,6 +10,16 @@ export default new VueRouter({
       name: 'home',
       component: () => import('../pages/home')
     },
+    {
+      path: '/download',
+      name: 'home',
+      component: () => import('../pages/download')
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('../pages/about')
+    },
     // 商品详情
     {
       path: '/details',

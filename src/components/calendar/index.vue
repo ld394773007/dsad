@@ -32,7 +32,6 @@ export default {
   },
   data () {
     return {
-      selectedDate: '',
       selectedDayEvents: {
         date: 'all',
         events: this.events || []  // default show all event
@@ -40,6 +39,10 @@ export default {
     }
   },
   props: {
+    selectedDate: {
+      type: String,
+      default: 'true'
+    },
     showEvent: {
       type: Boolean,
       default: true
@@ -114,8 +117,6 @@ export default {
       //     events: events
       //   }
       // }
-
-      this.selectedDate = date
       this.$emit('day-changed', {
         date: date,
         events: events
@@ -349,6 +350,7 @@ export default {
       right: 0;
       bottom: 0;
       top: 0;
+      -webkit-overflow-scrolling: touch;
       overflow-y: auto;
       padding: 0 15px;
       margin: 15px 0;

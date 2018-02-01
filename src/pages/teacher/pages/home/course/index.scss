@@ -1,0 +1,129 @@
+@import '../../../assets/scss/minix/index';
+@import '../../../assets/scss/theme/index';
+
+.content {
+  padding: 20px 28px;
+  margin-top: 20px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-top-left-radius: 18px;
+  background-color: #f6f7f9;
+}
+
+.add_btn_wrap {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 18px;
+  color: $themeColor;
+  .icon {
+    margin-right: 12px;
+  }
+}
+
+.scroll_content {
+  left: 28px;
+  right: 28px;
+  top: 60px;
+  bottom: 20px;
+}
+
+.loading_content, .list_content  {
+  display: flex;
+  justify-content: center;
+}
+.no_lesson {
+  text-align: center;
+}
+
+.icon_no_lesson {
+  margin-top: 80px;
+  margin-bottom: 20px;
+  display: block;
+  width: 128px;
+  height: 104px;
+  @include dprImg('class_kong');
+  background-size: 100%;
+}
+.course_list {
+  width: 100%;
+}
+.course_item {
+  margin-bottom: 16px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  color: #ADADBD;
+  .course_item_header {
+    display: flex;
+    padding-bottom: 20px;
+    border-bottom: 1px #F5F5F5 solid;
+  }
+  .course_profit {
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 28px;
+    p {
+      font-size: 24px;
+      color: #F25417;
+      i {
+        font-size: 14px;
+      }
+    }
+  }
+  .course_info {
+    width: 80%;
+    h2 {
+      width: 100%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      margin-bottom: 10px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #0B0817;
+    }
+  }
+  .course_item_footer {
+    padding-top: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    li {
+      margin-left: 104px;
+      text-align: center;
+      &:first-child {
+        margin-left: 0;
+      }
+      p {
+        margin-top: 10px;
+        width: 62px;
+        height: 62px;
+        text-align: center;
+        line-height: 62px;
+        font-size: 20px;
+        color: #0B0817;
+        font-weight: bold;
+        &.yyxs {
+          @include dprImg('reservations_s');
+          background-size: 100%;
+        }
+        &.jfxs {
+          @include dprImg('pay_student_s');
+          background-size: 100%;
+        }
+        &.kcs {
+          @include dprImg('numberofcourses_s');
+          background-size: 100%;
+        }
+      }
+    }
+  }
+}

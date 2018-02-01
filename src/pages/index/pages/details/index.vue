@@ -39,7 +39,7 @@
             <p class="m_tab_content_title">课程详情</p>
             <p>【课程难度】</p>
             <div class="start-content">
-              <i class="iconfont start">&#xe80a;</i>
+              <i class="iconfont start" v-for="(e, i) in detailData.tags">&#xe80a;</i>
               <i class="iconfont start" >&#xe80a;</i>
               <i class="iconfont start">&#xe80a;</i>
               <i class="iconfont start">&#xe80a;</i>
@@ -48,7 +48,7 @@
             <div class="introduce-content" v-html="detailData.pro_desc"></div>
             <div class="img-wrap">
               <img src="/static/images/deatils.jpg" />
-              <a @click="download"></a>
+              <a ref="download" @click="$router.push('./download')"></a>
             </div>
 
           </div>
@@ -85,20 +85,11 @@
       <QRcode style="z-index:10;" key="QRcode" @success="success" v-if="QRcode !== ''" @close="QRcode = ''" :code="QRcode" :id="orderId" />
       <payResult style="z-index:11;" key="payResult" v-if="visiableResult" :data="detailData" :startTime="formatStartTime" :price="toDecimal2(getNum(detailData.price))"></payResult>
     </transition-group>
-    <div v-if="download_mask" class="download_mask" @click="download_mask = false">
-      <div class="download_mask_header">
-        <div>
-          <p>请点击右上角菜单</p>
-          <p>在 默认浏览器 或 Safari 中打开</p>
-        </div>
-        <i></i>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
-  import {formatTime, ismobile} from '@/common/js/utils'
+  import {formatTime} from '@/common/js/utils'
   export default {
     name: 'm-details',
     components: {
@@ -125,8 +116,7 @@
         orderId: 0,
         QRcode: '',
         payList: [],
-        pay_code: '',
-        download_mask: false
+        pay_code: ''
       }
     },
     computed: {
@@ -156,22 +146,6 @@
       this.getDetail()
     },
     methods: {
-      download () {
-        let {is_weixin} = this
-        if (is_weixin()) {
-          this.download_mask = true
-        } else {
-          if (ismobile(0) === '0') {
-
-          } else {
-            window.location = 'http://www.yingyushu.com/app_download/ding.apk'
-          }
-        }
-      },
-      is_weixin () {
-        var ua = window.navigator.userAgent.toLowerCase()
-        return /MicroMessenger/i.test(ua)
-      },
       formatTime (t) {
         let time = formatTime(new Date(t * 1000), 'YYYY-MM-DD HH:mm').split(' ')
         let time1 = time[0].split('-')
@@ -232,7 +206,9 @@
           params: {courseId: id}
         }).then(({data}) => {
           if (!data.status) {
-            this.lessonList = data.data
+            this.lessonList = data.data.sort((a, b) => {
+              return a.start_time - b.end_time
+            })
           }
         })
       },
@@ -249,6 +225,7 @@
         .then(({data}) => {
           if (!data.status) {
             this.detailData = data.data
+            this.detailData.tags = this.detailData.tags === '' ? 0 : Number(this.detailData.tags)
             this.getLesson(data.data.link.id)
             let name = document.getElementById('name')
             let title = document.getElementById('title')
@@ -393,6 +370,9 @@
               this.$dialog.alert({
                 message: data.message
               })
+              .then(() => {
+                this.$refs.scroll.scrollToElement(this.$refs.download, 100)
+              })
             }
           })
       },
@@ -454,7 +434,7 @@
     beforeRouteEnter (to, from, next) {
       next(vm => {
         if (vm.$axios.defaults.headers.Authorization && from.path === '/payLogin') {
-          vm.clearChart()
+          vm.getPayList(0)
         }
       })
     }

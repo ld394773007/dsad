@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="m_wrap">
-      <van-nav-bar class="m_header" fixed left-arrow @click-left="close">
+      <van-nav-bar class="m_header" fixed left-arrow @click-left="$router.go(-1)" @click-right="close"  right-text="保存">
         <span slot="title">个人资料</span>
       </van-nav-bar>
       <div class="m_body pad16">
-        <div class="avater_cell">
+        <!-- <div class="avater_cell">
           <div class="avater_cell_left">
             <p>个人头像</p>
           </div>
@@ -17,7 +17,7 @@
             </div>
 
           </div>
-        </div>
+        </div> -->
         <van-cell-group class="my_cell_group">
           <van-cell title="手机号" :value="phoneNum" clickable></van-cell>
           <van-cell @click.native="showInput({key: 'realname', title: '姓名'})" title="姓名" :value="info.realname" clickable is-link></van-cell>
@@ -32,7 +32,7 @@
     </div>
     <transition name="right-in">
       <div key="editUser" class="m_wrap" v-if="visiable">
-        <van-nav-bar class="m_header" fixed left-arrow @click-left="save" right-text="保存" @click-right="save">
+        <van-nav-bar class="m_header" fixed left-arrow @click-left="save">
           <span slot="title">{{title}}</span>
         </van-nav-bar>
         <div class="m_body">
@@ -137,7 +137,7 @@
             .then(({data}) => {
               if (!data.status) {
                 if (window.dsBridge) {
-                  let info = this.$store.state.userInfo
+                  let info = JSON.parse(JSON.stringify(this.$store.state.userInfo))
                   let res = window.dsBridge.call('doOutClick', info)
                   res && removeCookie('student')
                 }
@@ -193,7 +193,10 @@
             this.$router.go(-1)
           })
         } else {
-          this.$router.go(-1)
+          this.$dialog.alert({
+            title: '提示',
+            message: '你还没有修改资料哦！'
+          })
         }
       },
       savaInfo () {
@@ -256,6 +259,13 @@
         }
         return arr[v - 1]
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        if (!vm.$store.state.userInfo.id) {
+          next('/login')
+        }
+      })
     }
   }
 </script>

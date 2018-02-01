@@ -3,11 +3,14 @@
     <van-nav-bar class="m_header" fixed left-arrow @click-left="close">
       <span slot="title">课程列表</span>
     </van-nav-bar>
-    <div class="m_body">
+    <div class="loading_content" v-if="show">
+      <van-loading style="width: 22px; height: 22px;" type="circle" color="black" />
+    </div>
+    <div class="m_body" v-if="!show">
+
       <van-tabs :active="active">
         <van-tab title="待上课程">
           <srcoll
-            v-if="lessonList"
             :data="lessonList"
             ref="scroll"
             class="srcoll_content"
@@ -15,41 +18,30 @@
             @pullingDown="onPullingDown(1)"
           >
             <div class="content">
-              <div class="loading_content" v-if="show">
-                <van-loading style="width: 22px; height: 22px;" type="circle" color="black" />
-              </div>
-              <transition name="bottom-go">
-                <div v-if="!show" class="w100">
+              <div class="w100">
                   <div class="no_lesson" v-if="!lessonList.length">
                     <i class="icon_no_lesson"></i>
                     <p>没有待上的课程哦~</p>
                   </div>
                   <lessonItem :key="item.id" :item="item" :index="index" v-for="(item,index) in lessonList"></lessonItem>
                 </div>
-              </transition>
             </div>
           </srcoll>
         </van-tab>
         <van-tab title="结束课程">
           <srcoll ref="scroll1"
-            v-if="end_lessonList"
             class="srcoll_content"
             :data="end_lessonList"
             :pullDownRefresh="!!end_lessonList.length"
             @pullingDown="onPullingDown(2)">
             <div class="content">
-              <div class="loading_content" v-if="show">
-                <van-loading style="width: 22px; height: 22px;" type="circle" color="black" />
-              </div>
-              <transition name="bottom-go">
-                <div v-if="!show" class="w100" style="padding: 15px;">
+              <div class="w100" style="padding: 15px;">
                   <div class="no_lesson" v-if="!end_lessonList.length">
                     <i class="icon_no_lesson"></i>
                     <p>没有已经结束的课程哦~</p>
                   </div>
                   <lessonItem :key="item.id" :item="item" :index="index" v-for="(item,index) in end_lessonList"></lessonItem>
                 </div>
-              </transition>
             </div>
           </srcoll>
         </van-tab>
@@ -130,6 +122,13 @@
     components: {
       lessonItem,
       srcoll
+    },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        if (!vm.$store.state.userInfo.id) {
+          next('/login')
+        }
+      })
     }
   }
 </script>
@@ -162,6 +161,11 @@
     height: 52px;
     @include dprImg('class_kong');
     background-size: 100%;
+  }
+}
+@media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+  .m_body {
+    bottom: 0;
   }
 }
 </style>

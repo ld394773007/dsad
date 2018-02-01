@@ -47,13 +47,7 @@ export default {
     this.captchaList = Array(this.number)
   },
   mounted () {
-    let time = setInterval(() => {
-      if (this.num === 0) {
-        clearInterval(time)
-      } else {
-        this.num -= 1
-      }
-    }, 1000)
+    this.countDown()
   },
   computed: {
     phone () {
@@ -85,6 +79,15 @@ export default {
     }
   },
   methods: {
+    countDown () {
+      let time = setInterval(() => {
+        if (this.num === 0) {
+          clearInterval(time)
+        } else {
+          this.num -= 1
+        }
+      }, 1000)
+    },
     close () {
       this.$emit('close')
     },
@@ -98,6 +101,8 @@ export default {
       this.$emit('submit', this.value)
     },
     sendCaptcha () {
+      this.num = 60
+      this.countDown()
       this.$emit('sendCaptcha')
     }
   }

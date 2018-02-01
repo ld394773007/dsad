@@ -23,10 +23,10 @@
             }, ...date.customClass]" :key="date.date">
           <p class="date-num" @click="handleChangeCurday(date)" :style="{color: today == date.date ? '#fff' : date.status ? date.title != undefined ? ((date.date == selectedDay) ? 'inherit' : 'inherit') : 'inherit' : '#ADADBD '}">
             {{date.date.split('/')[2]}}</p>
-          <span v-if="date.status ? (today == date.date) : false" class="is-today" :style="{backgroundColor: customColor }"></span>
-          <span v-if="date.status ? (date.title != undefined) : false" class="is-event-icon"><i></i><i></i><i></i></span>
-          <span v-if="date.status ? (date.title != undefined) : false" class="is-event" :style="{borderColor: customColor}"></span>
-          <span v-if="date.time == selectedDate" class="is-selected" :style="{borderColor: customColor}"></span>
+          <span v-if="(today == date.date)" class="is-today" :style="{backgroundColor: customColor }"></span>
+          <span v-if="(date.title != undefined)" class="is-event-icon"><i></i><i></i><i></i></span>
+          <span v-if="(date.title != undefined)" class="is-event" :style="{borderColor: customColor}"></span>
+          <span v-if="date.time == selectedDate" @click="handleChangeCurday(date)"  class="is-selected" :style="{borderColor: customColor}"></span>
         </div>
       </div>
     </div>
@@ -44,7 +44,8 @@
     name: 'cal-panel',
     data () {
       return {
-        i18n
+        i18n,
+        nowMonth: 0
       }
     },
     props: {
@@ -117,6 +118,7 @@
       curYearMonth () {
         let tempDate = Date.parse(new Date(`${this.calendar.params.curYear}/${this.calendar.params.curMonth + 1}/01`))
         this.$emit('updateDate', dateTimeFormatter(tempDate, this.i18n[this.calendar.options.locale].format))
+        this.nowMonth = tempDate
         return dateTimeFormatter(tempDate, this.i18n[this.calendar.options.locale].format)
       },
       customColor () {
@@ -135,6 +137,14 @@
       handleChangeCurday (date) {
         if (date.status) {
           this.$emit('cur-day-changed', date.time)
+        } else {
+          let time = new Date(date.date).getTime()
+          this.$emit('cur-day-changed', date.time)
+          if (time < this.nowMonth) {
+            this.preMonth()
+          } else {
+            this.nextMonth()
+          }
         }
       }
     }

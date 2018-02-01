@@ -20,7 +20,7 @@
         <div class="m_body captcha_wrap">
           <h2 class="register_title" style="margin-bottom: 15px;">填写孩子姓名</h2>
           <input class="m_input center" type="text" v-model="realname" placeholder="请填写你孩子的姓名" />
-          <a href="javascript:" class="m_btn full" @click="register"><span>下一步</span></a>
+          <button :disabled="isSubmit" href="javascript:" class="m_btn full" @click="register"><span>注册</span></button>
         </div>
       </div>
     </transition>
@@ -58,17 +58,12 @@ export default {
       realname: '',
       visiable: true,
       loading: false,
-      num: 60
+      num: 60,
+      isSubmit: false
     }
   },
   mounted () {
-    let time = setInterval(() => {
-      if (this.num === 0) {
-        clearInterval(time)
-      } else {
-        this.num -= 1
-      }
-    }, 1000)
+    this.countDown()
   },
   computed: {
     phone () {
@@ -100,6 +95,15 @@ export default {
     }
   },
   methods: {
+    countDown () {
+      let time = setInterval(() => {
+        if (this.num === 0) {
+          clearInterval(time)
+        } else {
+          this.num -= 1
+        }
+      }, 1000)
+    },
     close () {
       this.$emit('close')
     },
@@ -115,12 +119,31 @@ export default {
     },
     send () {
       if (this.isRegister) {
-        this.visiable = false
+        this.checkRegister()
       } else {
         this.login()
       }
     },
+    checkRegister () {
+      let {mobile, value} = this
+      let {post} = this.$axios
+
+      post('/v1/user/sign-up-sms', {
+        mobile,
+        captcha: value
+      }).then(({data}) => {
+        if (!data.status) {
+          this.visiable = false
+        } else {
+          this.$dialog.alert({
+            title: '提示',
+            message: data.message
+          })
+        }
+      })
+    },
     register () {
+      this.isSubmit = true
       this.$toast.loading()
       let {post} = this.$axios
       let {mobile, value, realname} = this
@@ -134,6 +157,7 @@ export default {
         repassword: mobile.slice(-8)
       })
       .then(({data}) => {
+        this.isSubmit = false
         this.$toast.clear()
         if (!data.status) {
           setCookie({
@@ -147,12 +171,14 @@ export default {
           this.$shopApi.defaults.headers = {
             Authorization: 'Bearer ' + data.data.token
           }
-          this.registerFn && this.registerFn({mobile, ...data.data, password: mobile.slice(-7)})
+          this.registerFn && this.registerFn({mobile, ...data.data, password: mobile.slice(-8)})
           !this.registerFn && this.$router.go(-1)
         } else {
           this.$dialog.alert({
             title: '提示',
             message: data.message
+          }).then(() => {
+            this.visiable = true
           })
         }
       })
@@ -187,6 +213,8 @@ export default {
     },
     sendCaptcha () {
       this.$emit('send')
+      this.num = 60
+      this.countDown()
     }
   }
 }

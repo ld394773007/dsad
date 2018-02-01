@@ -37,7 +37,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 16px;
   height: 50px;
   width: 100%;
   background-color: #fff;
@@ -56,11 +55,13 @@ export default {
   &_left {
     display: flex;
     align-items: center;
+    padding: 0 15px;
   }
   &_right {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    padding: 0 15px;
   }
   &_center {
     flex: 6;

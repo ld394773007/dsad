@@ -139,13 +139,15 @@
       setTimeout(() => {
         this.initScroll()
       }, 20)
+      setTimeout(() => {
+        this.refresh()
+      }, 1000)
     },
     methods: {
       initScroll () {
         if (!this.$refs.wrapper) {
           return
         }
-        console.log(this.pullDownRefresh)
         if (this.$refs.listWrapper && (this.pullDownRefresh || this.pullUpLoad)) {
           this.$refs.listWrapper.style.minHeight = `${getRect(this.$refs.wrapper).height + 1}px`
         }
@@ -194,7 +196,6 @@
         this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
       },
       clickItem (e, item) {
-        console.log(e)
         this.$emit('click', item)
       },
       destroy () {
@@ -214,6 +215,7 @@
         } else {
           this.refresh()
         }
+        this.refresh()
       },
       _initPullDownRefresh () {
         this.scroll.on('pullingDown', () => {
@@ -259,7 +261,7 @@
       }
     },
     watch: {
-      data () {
+      data (v) {
         setTimeout(() => {
           this.forceUpdate(true)
         }, this.refreshDelay)
@@ -300,6 +302,7 @@
     position: absolute;
     width: 100%;
     left: 0;
+    top: -50px;
     display: flex;
     justify-content: center;
     align-items: center;

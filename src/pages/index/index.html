@@ -34,7 +34,7 @@
               }
 
               var content = 'width=' + 375 + ', initial-scale=' + pageScale
-                + ', maximum-scale=' + pageScale + ', user-scalable=no';
+                + ', maximum-scale=' + pageScale + ', user-scalable=no,viewport—fit=cover';
               document.querySelector('meta[name=viewport]').setAttribute('content', content);
 
               window.pageScale = pageScale;
@@ -49,7 +49,6 @@
   </head>
   <body>
     <div id="app"></div>
-
     <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
     <script src="/static/js/vant.min.js"></script>
     <script src="https://cdn.bootcss.com/vuex/3.0.1/vuex.min.js"></script>

@@ -3,15 +3,10 @@
     <div v-if="maskVisiable" style="background:#fff;position: fixed;left:0;right:0;bottom:0;top:0;z-index:999999;"></div>
     <van-nav-bar class="m_header border0" fixed>
     </van-nav-bar>
-
     <div class="m_body d_login_content">
-      <h2 class="d_login_content_title">登录叮叮云教室</h2>
+      <i class="logo"></i>
+      <h2 class="d_login_content_title">进入叮叮云教室</h2>
       <div class="m_tab_wrapper">
-        <div class="m_tab_nav" >
-          <a class="m_tabs" @click="changeActive(0)">验证码登陆</a>
-          <a class="m_tabs" @click="changeActive(1)">密码登陆</a>
-          <i class="m_tab_line" :style="{'left': left}"></i>
-        </div>
         <div class="m_tab_content">
           <div class="m_tab_content_wrap" :style="style">
             <div>
@@ -31,56 +26,60 @@
             </div>
           </div>
         </div>
-        <div class="fixed_bottom_content">
-          <p>没有账号？<a class="m_btn m_btn_text" @click="registerVisiable = true">注册</a></p>
-        </div>
       </div>
     </div>
-    <register
-      key="register"
-      v-if="registerVisiable"
-      @close="registerVisiable = false"
-      @send="register"
-      @changeMobile="changeMobile"
-    />
     <transition name="right-in">
       <captcha
         key="captcha"
-        :isRegister="isRegister"
-        :loginFn="loginFn"
-        :registerFn="registerFn"
         :mobile="mobile"
-        @send="send"
+        @submit="captchaSubmit"
+        @sendCaptcha="send"
         @close="visiable = false"
         v-if="visiable"
       />
     </transition>
-
+    <transition name="right-in">
+      <div class="m_wrap register-wrap" v-if="registerVisiable">
+        <van-nav-bar class="m_header border0" fixed left-arrow @click-left="registerVisiable = false" fixed>
+        </van-nav-bar>
+        <div class="m_body register_wrap">
+          <h2 class="register_title" style="margin-bottom: 15px;">填写孩子的真实姓名</h2>
+          <input class="m_input center" type="text" v-model="realname" placeholder="请填写你孩子的真实姓名" />
+          <a href="javascript:" class="m_btn full" @click="registerSubmit"><span>进入叮叮云教室</span></a>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 <script>
-import {setCookie} from '@/common/js/utils'
+import {setCookie, formatTime} from '@/common/js/utils'
 export default {
   name: 'login',
   data () {
     return {
+      captcha: '',
       active: 0,
       mobile: '',
       password: '',
       visiable: false,
       registerVisiable: false,
       isRegister: false,
-      maskVisiable: true
+      maskVisiable: true,
+      realname: '',
+      phoneReg: /^(0|86|17951)?(13[0-9]|15[012356789]|17[0-9]|18[0-9]|14[57])[0-9]{8}$/
     }
   },
   created () {
-    let {k, p, m} = this.$route.query
+    let {k, p, m, versionName} = this.$route.query
     if (k && m && (k !== '')) {
       this.captchaLogin({mobile: m, key: k})
     } else if (p && m && (p !== '')) {
       this.passLogin(m, p, '自动登录失败')
     } else {
       this.maskVisiable = false
+    }
+    if (versionName) {
+      this.$store.commit('UPDATEVERSION', versionName)
     }
   },
   methods: {
@@ -130,8 +129,18 @@ export default {
       })
     },
     getLesson () {
+      let _t = new Date().getTime() + (1000 * 60 * 60 * 24 * 360)
+      let t = new Date().getTime() - (1000 * 60 * 60 * 24 * 30)
+      let time = formatTime(new Date(t), 'YYYY-MM-DD HH:mm:ss')
+      let _time = formatTime(new Date(_t), 'YYYY-MM-DD HH:mm:ss')
       let {get} = this.$axios
-      get('/v1/student-lesson/list?expand=course,teacher,assistant,image,room')
+      get('/v1/student-lesson/list?expand=course,teacher,assistant,image,room', {
+        params: {
+          startTime: time,
+          endTime: _time,
+          pageSize: 100
+        }
+      })
       .then(({data}) => {
         if (!data.status) {
           this.$store.commit('UPDATE_LESSON_LIST', data.data)
@@ -139,9 +148,62 @@ export default {
       })
     },
     login () {
+      let {mobile, password, phoneReg} = this
+      if (mobile === '') {
+        this.$dialog.alert({
+          title: '提示',
+          message: '手机号不能为空'
+        })
+        return
+      }
+      if (!phoneReg.test(mobile)) {
+        this.$dialog.alert({
+          title: '提示',
+          message: '请输入有效的手机号'
+        })
+        return
+      }
+      if (password === '' || password.length < 6) {
+        this.$dialog.alert({
+          title: '提示',
+          message: '密码不能为空且不能小于6位'
+        })
+        return
+      }
       this.$toast.loading()
-      let {mobile, password} = this
       this.passLogin(mobile, password, '提示')
+    },
+    captchaSubmit (v) {
+      if (this.isRegister) {
+        this.captcha = v
+        this.checkRegister()
+      } else {
+        this.$toast.loading()
+        this.captchaLogin({
+          mobile: this.mobile,
+          captcha: v
+        })
+      }
+    },
+    checkRegister () {
+      this.$toast.loading()
+      let {mobile, captcha} = this
+      let {post} = this.$axios
+
+      post('/v1/user/sign-up-sms', {
+        mobile,
+        captcha
+      }).then(({data}) => {
+        this.$toast.clear()
+        if (!data.status) {
+          this.registerVisiable = true
+        } else {
+          this.$dialog.alert({
+            title: '提示',
+            message: data.message
+          })
+        }
+      })
     },
     captchaLogin (obj) {
       let {post} = this.$axios
@@ -195,6 +257,42 @@ export default {
         }
       })
     },
+    registerSubmit () {
+      let {post} = this.$axios
+      let {mobile, captcha, realname, registerFn} = this
+
+      if (realname === '') {
+        this.$dialog.alert({title: '提示', message: '请填写孩子的姓名！'})
+        return
+      }
+      this.$toast.loading()
+      post('/v1/user/one-step-signup', {
+        mobile,
+        captcha,
+        accountType: 'parent',
+        realname: realname,
+        school: '未填',
+        password: mobile.slice(-8),
+        repassword: mobile.slice(-8)
+      }).then(({data}) => {
+        this.$toast.clear()
+        if (!data.status) {
+          setCookie({
+            name: 'student',
+            value: data.data
+          })
+          this.$axios.defaults.headers = {
+            Authorization: 'Bearer ' + data.data.token
+          }
+          this.$shopApi.defaults.headers = {
+            Authorization: 'Bearer ' + data.data.token
+          }
+          registerFn({mobile, ...data.data, password: mobile.slice(-8)})
+        } else {
+          this.$dialog.alert({title: '提示', message: data.message})
+        }
+      })
+    },
     register (m) {
       this.sendCaptcha(m, 0, (data) => {
         this.$toast.success('发送成功')
@@ -229,7 +327,11 @@ export default {
         if (!data.status) {
           fn && fn(data)
         } else {
-          this.$dialog.alert({title: '提示', message: data.message})
+          if (data.status === 422 && data.message.indexOf('未注册') !== -1) {
+            this.register(mobile)
+          } else {
+            this.$dialog.alert({title: '提示', message: data.message})
+          }
         }
       })
     }
@@ -246,12 +348,21 @@ export default {
     }
   },
   components: {
-    captcha: () => import('../../components/captcha/index'),
+    captcha: () => import('../../components/sendCap'),
     register: () => import('../../components/register/index')
   }
 }
 </script>
 <style lang="scss" scoped>
+@import '../../assets/scss/minix/index';
+.logo {
+  margin: 15px auto;
+  display: block;
+  width: 70px;
+  height: 70px;
+  background: url('/static/images/icon2_s.png') no-repeat;
+  background-size: 100%;
+}
 .d_login {
   background-color: #fff;
 }
@@ -289,6 +400,26 @@ export default {
   margin-top: 5px;
   color: #ccc;
   text-align: center;
+}
+.register_wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  .m_input,
+  .m_btn {
+    margin-bottom: 25px;
+    width: 70%;
+  }
+}
+.register_title {
+  font-weight: normal;
+  font-size: 20px;
+  color: #000;
+}
+
+.register-wrap.m_wrap {
+  z-index: 99999;
 }
 </style>
 
