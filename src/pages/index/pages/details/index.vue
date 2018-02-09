@@ -72,7 +72,7 @@
         <i class="iconfont">&#xe692;</i>
         <span>联系客服</span>
       </a> -->
-      <a class="fixed_btn_wrap_right" href="javascript:" @click="getPayList(0)">立即预约</a>
+      <a class="fixed_btn_wrap_right" href="javascript:" @click="handleBespoke">立即预约</a>
     </div>
     <div class="m_popup" v-if="visiable">
       <div class="m_popup_mask" @click="handlerCancel"></div>
@@ -169,6 +169,13 @@
       this.getDetail()
     },
     methods: {
+      handleBespoke () {
+        this.$dialog.alert({
+          title: '提示',
+          message: '课程已报满！'
+        })
+        // this.getPayList(0)
+      },
       onClickNavLeft () {
         if (this.hasDsBridge) {
           this.$router.go(-1)
