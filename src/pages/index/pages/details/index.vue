@@ -1,6 +1,6 @@
 <template>
   <div class="m_wrap"  ref="content">
-    <van-nav-bar class="m_header" fixed>
+    <van-nav-bar class="m_header" fixed :left-arrow="hasDsBridge" @click-left="onClickNavLeft">
       <span slot="title">课程介绍</span>
     </van-nav-bar>
     <div class="deatils-tab" :class="`active-${active}`">
@@ -14,13 +14,22 @@
     <transition name="bottom-go">
       <srcoll v-if="detailData" :data="detailData" @init="_calculateHeight" :listenScroll="true" :probeType="3" @scroll="scroll" ref="scroll" class="m_body" style="top:82px;margin: 8px 16px;">
         <div class="m_tab_wrap content" style="padding-bottom: 50px;">
+          <div class="banner" v-if="detailData.thumb_src !== ''">
+            <img :src="detailData.thumb_src">
+          </div>
           <div class="m_tab_content deatils_content mod_content">
             <h2>{{detailData.pro_name}}</h2>
+            <div class="teacher_info" v-if="teacherInfo">
+              <img src="/static/images/avater/avater_man@2x.png">
+              <p>{{teacherInfo.realname}}</p>
+            </div>
             <span>开始时间：{{formatStartTime}}</span>
             <span>科目：<i>{{detailData.link.category.title}}</i></span>
-            <!-- <div class="price">
-              <span class="blue">¥<i>{{detailData.promote_price ? detailData.promote_price : detailData.price}}</i></span>
-            </div> -->
+            <span style="margin-bottom: 0;">年级：<i>{{teacherInfo.grade}}</i></span>
+            <div class="price">
+              <span class="blue"><i>{{detailData.promote_price ? '¥' + detailData.promote_price : detailData.price === '0.00' ? '免费' : '¥' + detailData.price}}</i></span>
+            </div>
+            <span class="sold">已售：{{teacherInfo.num}}人</span>
           </div>
           <div class="m_tab_content deatils_content mod_content">
             <p class="m_tab_content_title">课程大纲</p>
@@ -38,16 +47,19 @@
           <div class="m_tab_content deatils_content mod_content">
             <p class="m_tab_content_title">课程详情</p>
             <p>【课程难度】</p>
-            <div class="start-content">
+            <div class="start-content" style="margin: 10px 0;">
               <i class="iconfont start" v-for="(e, i) in detailData.tags">&#xe80a;</i>
               <i class="iconfont start" >&#xe80a;</i>
               <i class="iconfont start">&#xe80a;</i>
               <i class="iconfont start">&#xe80a;</i>
               <i class="iconfont start">&#xe7f1;</i>
             </div>
+            <p>【课程目标】</p>
+            <div class="introduce-content" v-html="detailData.pro_brief === '' ? '无' : detailData.pro_brief "></div>
+            <p>【课程介绍】</p>
             <div class="introduce-content" v-html="detailData.pro_desc"></div>
             <div class="img-wrap">
-              <img src="/static/images/deatils.jpg" />
+              <img :src="hasDsBridge ? '/static/images/deatils_2.jpg' : '/static/images/deatils.jpg'" />
               <a ref="download" @click="$router.push('./download')"></a>
             </div>
 
@@ -116,7 +128,18 @@
         orderId: 0,
         QRcode: '',
         payList: [],
-        pay_code: ''
+        pay_code: '',
+        hasDsBridge: true,
+        teacherInfo: null
+      }
+    },
+    created () {
+      if (window.dsBridge) {
+        this.hasDsBridge = true
+      }
+
+      if (sessionStorage.getItem('teacherInfo')) {
+        this.teacherInfo = JSON.parse(sessionStorage.getItem('teacherInfo'))
       }
     },
     computed: {
@@ -146,6 +169,11 @@
       this.getDetail()
     },
     methods: {
+      onClickNavLeft () {
+        if (this.hasDsBridge) {
+          this.$router.go(-1)
+        }
+      },
       formatTime (t) {
         let time = formatTime(new Date(t * 1000), 'YYYY-MM-DD HH:mm').split(' ')
         let time1 = time[0].split('-')
@@ -329,6 +357,12 @@
       },
        // 获取支付方式列表
       getPayList (v) {
+        if (window.dsBridge) {
+          if (!this.$store.state.userInfo.id) {
+            this.$router.push('/payLogin')
+            return
+          }
+        }
         let { get } = this.$shopApi
         get('/v1/order/pay-list')
           .then(({data}) => {
@@ -371,7 +405,9 @@
                 message: data.message
               })
               .then(() => {
-                this.$refs.scroll.scrollToElement(this.$refs.download, 100)
+                if (!window.dsBridge) {
+                  this.$refs.scroll.scrollToElement(this.$refs.download, 100)
+                }
               })
             }
           })
@@ -433,6 +469,12 @@
     },
     beforeRouteEnter (to, from, next) {
       next(vm => {
+        if (window.dsBridge) {
+          if (vm.$store.state.userInfo.id && from.path === '/payLogin') {
+            vm.getPayList(0)
+          }
+          return
+        }
         if (vm.$axios.defaults.headers.Authorization && from.path === '/payLogin') {
           vm.getPayList(0)
         }
@@ -443,6 +485,26 @@
 
 <style lang="scss">
   @import '../../assets/scss/variable/index';
+  .banner {
+    img {
+      width: 100%;
+    }
+  }
+  .m_tab_content_title {
+    margin-bottom: 10px;
+  }
+  .teacher_info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    color: #ADADBD;
+    img {
+      margin-right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 60%;
+    }
+  }
   .no_dg {
     padding: 20px;
     display: flex;
@@ -544,7 +606,7 @@
         width: 115%;
       }
     }
-    .price {
+    .price, .sold {
       padding-top: 8px;
       text-align: right;
     }

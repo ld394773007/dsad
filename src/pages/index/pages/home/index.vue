@@ -1,10 +1,18 @@
 <template>
   <div class="m_wrap">
-    <div v-if="!active">
-      <van-nav-bar class="m_header" fixed right-text="全部课程" @click-right="$router.push('./lesson')">
+    <findLesson @pullDown="getLessonList" :listData="listData" v-if="!active"></findLesson>
+    <practice @pullDown="getTestList" :data="testData" v-if="active == 1"></practice>
+    <div v-if="active == 2">
+      <van-nav-bar class="m_header" fixed right-text="全部课程" @click-right="goLesson">
         <p slot="title">我的课程</p>
       </van-nav-bar>
+      <div class="no_login_lesson m_body" v-if="!userInfo.id">
+        <i></i>
+        <p>登录后即可查看</p>
+        <a class="m_btn" @click="__login">登录</a>
+      </div>
       <srcoll
+        v-if="userInfo.id"
         ref="scroll"
         class="m_body is_center class"
         :pullDownRefresh="true"
@@ -38,6 +46,9 @@
               v-for="(item, index) in lessonList[1]"
               v-if="lessonList[1].length"
             ></lessonItem>
+            <div class="no_more" v-if="lessonList[1].length">
+              没有更多内容了
+            </div>
             <div class="no_lesson" v-if="!lessonList[1].length">
               <i class="icon_no_lesson"></i>
               <p>最近一周没有课程哦~</p>
@@ -47,19 +58,22 @@
         </div>
       </srcoll>
     </div>
-    <div class="m_body is_center has_top" v-if="active">
+    <div class="m_body is_center has_top" v-if="active == 3">
       <div class="my_header">
-        <router-link to="/editUser" class="my_avater">
-          <div class="my_avater_img">
-            <img :src="avater">
+        <div class="my_header_content">
+          <router-link to="/editUser" class="my_avater"  :class="{'no_login': !userInfo.id}">
+            <div class="my_avater_img">
+              <img :src="avater" v-if="userInfo.id">
+            </div>
+          </router-link>
+          <div class="my_info_wrap" v-if="userInfo.id">
+            <h2 class="my_name">{{userInfo.realname}}</h2>
+            <div class="my_info">
+              <p>{{userInfo_en_name}}</p>
+              <span>{{phoneNum}}</span>
+            </div>
           </div>
-        </router-link>
-        <div class="my_info_wrap">
-          <h2 class="my_name">{{userInfo.realname}}</h2>
-          <div class="my_info">
-            <p>{{userInfo_en_name}}</p>
-            <span>{{phoneNum}}</span>
-          </div>
+          <a class="m_btn" v-else type="primary" style="width: 100px;margin-top:15px;" @click="__login">登录</a>
         </div>
       </div>
       <div class="my_body">
@@ -72,7 +86,7 @@
               </div>
             </template>
           </van-cell> -->
-           <van-cell to="./lesson" clickable is-link>
+           <van-cell @click="goLesson" clickable is-link>
             <template slot="title">
               <div class="my_cell_content">
                 <i class="cell_icon kc"></i>
@@ -100,22 +114,19 @@
           </van-cell>
         </van-cell-group>
         <van-cell-group class="my_cell_group">
+          <van-cell @click="showEwm = true" title="联系客服" is-link/>
           <van-cell title="关于叮叮云教室" to="/about" is-link/>
         </van-cell-group>
       </div>
     </div>
-    <van-tabbar v-model="active">
-      <van-tabbar-item>
-        <template slot="icon" slot-scope="props">
-          <i class="h_icon class" :class="{'active':props.active}"></i>
-        </template>
+    <van-tabbar v-model="active" class="nav_tabbar">
+      <van-tabbar-item class="nav_item" :class="{[item]: true, 'active': active == i}" :key="i" v-for="(item, i) in navItem">
       </van-tabbar-item>
-      <van-tabbar-item>
-        <template slot="icon" slot-scope="props">
-          <i class="h_icon my" :class="{'active':props.active}"></i>
-        </template>
       </van-tabbar-item>
     </van-tabbar>
+    <van-popup v-model="showEwm" :overlay="true">
+      <i class="icon_ewm"></i>
+    </van-popup>
   </div>
 </template>
 <script>
@@ -125,13 +136,23 @@ export default {
   name: 'home',
   data () {
     return {
-      active: 0
+      navItem: ['findClass', 'subject', 'class', 'my'],
+      active: 0,
+      listData: [],
+      testData: false,
+      showEwm: false
     }
   },
   created () {
+    let {versionName} = this.$route.query
+    if (versionName) {
+      this.$store.commit('UPDATEVERSION', versionName)
+    }
     if (window.sessionStorage.getItem('homeActive')) {
       this.active = Number(window.sessionStorage.getItem('homeActive'))
     }
+    this.getLessonList()
+    this.getTestList()
   },
   watch: {
     active (n) {
@@ -139,6 +160,36 @@ export default {
     }
   },
   methods: {
+    __login () {
+      this.$store.commit('CHANGE_LOGIN_STATUS', true)
+    },
+    getTestList () {
+      let {get} = this.$axios
+
+      get('/v1/train-paper/list').then(({data}) => {
+        if (!status) {
+          this.testData = data.data.sort((a, b) => {
+            return a.is_elite < b.is_elite
+          })
+        }
+      })
+    },
+    getLessonList () {
+      let {get} = this.$shopApi
+
+      get('/v1/product/hot').then(({data}) => {
+        if (!status) {
+          this.listData = data.data
+        }
+      })
+    },
+    goLesson () {
+      if (!this.userInfo.id) {
+        this.$store.commit('CHANGE_LOGIN_STATUS', true)
+      } else {
+        this.$router.push('./lesson')
+      }
+    },
     checkVersion () {
       this.$toast.loading()
       if (window.dsBridge) {
@@ -185,6 +236,9 @@ export default {
     },
     avater () {
       let {userInfo} = this
+      if (!userInfo.id) {
+        return ''
+      }
       if (this.userInfo.sex === 1) {
         return userInfo.avater && userInfo.avater !== '' ? userInfo.avater : '/static/images/avater/avater_boy@3x.png'
       } else {
@@ -221,34 +275,89 @@ export default {
       return phoneNum
     }
   },
+  beforeRouteEnter (to, from, next) {
+    if (from.path === '/payResult') {
+      next(vm => {
+        vm.getTestList()
+      })
+    } else {
+      next()
+    }
+  },
   components: {
     srcoll: () => import('@/components/srcoll'),
-    lessonItem
+    lessonItem,
+    findLesson: () => import('./findLesson'),
+    practice: () => import('./practice')
   }
 }
 </script>
 <style lang="scss" scoped>
 @import '../../assets/scss/variable/index';
 @import '../../assets/scss/minix/index';
+.icon_ewm {
+  display: block;
+  width: 200px;
+  height: 200px;
+  @include dprImg('ewm');
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+.no_login_lesson {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  bottom: 50px;
+  i {
+    display: block;
+    width: 102px;
+    height: 78px;
+    @include dprImg('login');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    margin-bottom: 15px;
+  }
+  p {
+    margin-bottom: 20px;
+  }
+  .m_btn {
+    width: 100px;
+  }
+}
 .m_header {
   border-bottom: 1px #e0dfdf solid;
 }
-.h_icon {
-  display: block;
-  width: 26px;
-  height: 34px;
-  background-size: 100%;
+.nav_tabbar  {
+  padding-top: 5px;
+  border-top: 1px #e5e5e5 solid;
+}
+.nav_item {
+  background-size: 120%;
+  background-position: center;
   background-repeat: no-repeat;
-  &.class {
-    @include dprImg('class');
+  &.findClass {
+    @include dprImg('/zhaoke/findClass');
     &.active {
-      @include dprImg('class_hl');
+      @include dprImg('/zhaoke/findClass_hl');
+    }
+  }
+  &.subject {
+    @include dprImg('/zhaoke/subject');
+    &.active {
+      @include dprImg('/zhaoke/subject_hl');
+    }
+  }
+  &.class {
+    @include dprImg('/zhaoke/class');
+    &.active {
+      @include dprImg('/zhaoke/class_hl');
     }
   }
   &.my {
-    @include dprImg('my');
+    @include dprImg('/zhaoke/my');
     &.active {
-      @include dprImg('my_hl');
+      @include dprImg('/zhaoke/my_hl');
     }
   }
 }
@@ -267,6 +376,7 @@ export default {
 }
 .m_body.class {
   padding: 0 16px;
+  bottom: 50px;
   .content {
     padding-bottom: 16px;
   }
@@ -276,13 +386,24 @@ export default {
   top: 0;
 }
 .my_header {
+  box-sizing: border-box;
+  height: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 15px 27px 40px 27px;
+  padding: 30px 27px 40px 27px;
   margin-bottom: 12px;
   background-color: #fff;
+
+  &_content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+  }
 }
 .my_avater {
   position: relative;
@@ -298,6 +419,7 @@ export default {
       height: 100%;
     }
   }
+
   &:after {
       content: '';
       position: absolute;
@@ -309,6 +431,9 @@ export default {
       transform: translateY(-50%);
       background-size: 100%;
     }
+  &.no_login::after {
+    display: none;
+  }
 }
 
 

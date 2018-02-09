@@ -52,7 +52,7 @@
               <i>{{index + 1}}</i>
               <input v-model="item.name" type="text" placeholder="请填写课程名称" class="lesson_input">
               <input v-model="item.start_time" @focus="focus(index, $event)" type="text" placeholder="选择上课开始时间" class="lesson_input">
-              <input v-model="item.timeLength" style="margin-left: 8px; width: 150px;" @click="selectLessonTime(index)" type="text" placeholder="请填写课程时长" class="lesson_input">
+              <div class="lesson_input" style="margin-left: 8px; width: 150px;" @click="selectLessonTime(index)">{{item.timeLength}}分钟</div>
               <el-button type="danger" @click="removeLesson(index)">删除</el-button>
             </li>
           </ul>

@@ -144,6 +144,7 @@
                 removeCookie('student')
                 this.$router.push('/login')
                 this.$store.commit('UPLOAD_USER_INFO', {})
+                this.$store.commit('UPDATE_LESSON_LIST', [])
               }
             })
         })

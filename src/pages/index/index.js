@@ -16,10 +16,12 @@ require('es6-promise').polyfill()
 
 const axios = require('axios')
 
+Vue.prototype.$frontend = axios.create({
+  baseURL: 'https://www.yingyushu.com/fr_b'
+})
 Vue.prototype.$axios = axios
 Vue.prototype.$axios.defaults.baseURL = 'https://www.yingyushu.com/fr_u'
-// Vue.prototype.$axios.defaults.baseURL = 'http://uc.yys.com'
-
+// Vue.prototype.$axios.defaults.baseURL = 'http://api.user.yys.com'
 Vue.prototype.$shopApi = axios.create({
   baseURL: 'https://www.yingyushu.com/fr_shop',
   validateStatus: (status) => {

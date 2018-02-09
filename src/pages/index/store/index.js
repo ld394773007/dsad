@@ -6,7 +6,8 @@ import {
   UPDATE_LESSON_LIST,
   CHANGE_USER_STATUS,
   UPLOAD_PHONE_NUM,
-  UPDATEVERSION
+  UPDATEVERSION,
+  CHANGE_LOGIN_STATUS
 } from './types'
 
 Vue.use(Vuex)
@@ -17,7 +18,8 @@ const store = new Vuex.Store({
     phoneNum: '',
     lessonList: [],
     editStatus: false,
-    version: '1.0.0'
+    version: '1.0.0',
+    isLogin: false
   },
   mutations: {
     // 更新用户信息
@@ -40,6 +42,9 @@ const store = new Vuex.Store({
     },
     [UPDATEVERSION] (state, payload) {
       state.version = payload
+    },
+    [CHANGE_LOGIN_STATUS] (state, payload) {
+      state.isLogin = payload
     }
   },
   actions: {

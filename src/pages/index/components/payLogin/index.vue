@@ -3,14 +3,15 @@
     <van-nav-bar class="m_header border0" fixed left-arrow @click-left="close">
     </van-nav-bar>
     <div class="m_body p_validate">
-      <h2 class="p_validate_title">手机验证</h2>
+      <i class="logo"></i>
+      <h2 class="p_validate_title">进入叮叮云教室</h2>
       <div class="p_validate_login">
         <div class="m_validate_input" >
           <span>+86</span>
           <input ref="input" v-model="mobile" type="tel" placeholder="手机号">
         </div>
         <a href="javascript:" class="m_btn full" @click="send(false)"><van-loading v-if="loading" type="circle" color="white" /><span v-else>发送验证码</span></a>
-        <p>手机号将作为叮叮云教室上课登录账号</p>
+        <p>新用户也可直接使用手机号登录</p>
       </div>
     </div>
     <transition name="right-in">
@@ -76,6 +77,14 @@ export default {
 }
 </script>
 <style lang="scss">
+.logo {
+  margin: 15px auto;
+  display: block;
+  width: 70px;
+  height: 70px;
+  background: url('/static/images/icon2_s.png') no-repeat;
+  background-size: 100%;
+}
 .van-hairline--top-bottom::after {
   border-width: 0;
 }

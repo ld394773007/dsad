@@ -32,7 +32,7 @@
   </div>
 </template>
 <script>
-import {setCookie} from '@/common/js/utils'
+import {setCookie, formatTime} from '@/common/js/utils'
 export default {
   name: 'captacha',
   props: {
@@ -124,6 +124,60 @@ export default {
         this.login()
       }
     },
+    _loginFn (data) {
+      this.getUserInfo(data)
+      this.getLesson()
+    },
+    _registerFn (data) {
+      this.getUserInfo(data)
+      this.getLesson()
+    },
+    getUserInfo (v) {
+      let {get} = this.$axios
+      get('/v1/member/profile')
+      .then(({data}) => {
+        if (!data.status) {
+          let {mobile, token} = v
+          let obj = {
+            mobile,
+            token
+          }
+          if (v.key) {
+            obj.key = v.key
+          } else if (v.password) {
+            obj.password = v.password
+          }
+          window.localStorage.setItem('phoneNum', mobile)
+          this.$store.commit('UPLOAD_PHONE_NUM', mobile)
+          this.$store.commit('UPLOAD_USER_INFO', data.data)
+          let info = JSON.parse(JSON.stringify(Object.assign(data.data, obj)))
+          this.$router.go(-1)
+          if (window.dsBridge) {
+            let res = window.dsBridge.call('doInfoClick', info)
+            res && console.log(res)
+          }
+        }
+      })
+    },
+    getLesson () {
+      let _t = new Date().getTime() + (1000 * 60 * 60 * 24 * 360)
+      let t = new Date().getTime() - (1000 * 60 * 60 * 24 * 30)
+      let time = formatTime(new Date(t), 'YYYY-MM-DD HH:mm:ss')
+      let _time = formatTime(new Date(_t), 'YYYY-MM-DD HH:mm:ss')
+      let {get} = this.$axios
+      get('/v1/student-lesson/list?expand=course,teacher,assistant,image,room', {
+        params: {
+          startTime: time,
+          endTime: _time,
+          pageSize: 100
+        }
+      })
+      .then(({data}) => {
+        if (!data.status) {
+          this.$store.commit('UPDATE_LESSON_LIST', data.data)
+        }
+      })
+    },
     checkRegister () {
       let {mobile, value} = this
       let {post} = this.$axios
@@ -172,7 +226,7 @@ export default {
             Authorization: 'Bearer ' + data.data.token
           }
           this.registerFn && this.registerFn({mobile, ...data.data, password: mobile.slice(-8)})
-          !this.registerFn && this.$router.go(-1)
+          !this.registerFn && this._registerFn({mobile, ...data.data, password: mobile.slice(-8)})
         } else {
           this.$dialog.alert({
             title: '提示',
@@ -202,7 +256,7 @@ export default {
             Authorization: 'Bearer ' + data.data.token
           }
           this.loginFn && this.loginFn({mobile, ...data.data})
-          !this.loginFn && this.$router.go(-1)
+          !this.loginFn && this._loginFn({mobile, ...data.data})
         } else {
           this.$dialog.alert({
             title: '提示',

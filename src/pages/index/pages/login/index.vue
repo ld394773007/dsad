@@ -1,7 +1,7 @@
 <template>
   <div class="m_wrap d_login" ref="wrap">
     <div v-if="maskVisiable" style="background:#fff;position: fixed;left:0;right:0;bottom:0;top:0;z-index:999999;"></div>
-    <van-nav-bar class="m_header border0" fixed>
+    <van-nav-bar class="m_header border0" fixed left-arrow @click-left="handleClickLeft">
     </van-nav-bar>
     <div class="m_body d_login_content">
       <i class="logo"></i>
@@ -15,6 +15,7 @@
                 <input ref="input" v-model="mobile" type="tel" placeholder="手机号">
               </div>
               <a class="m_btn full send_cap" @click="send(false)"><span style="color: #fff; margin-bottom:0;">发送验证码</span></a>
+              <p class="subtitle">新用户也可直接使用手机号登录</p>
             </div>
             <div>
               <div class="m_input_group">
@@ -34,7 +35,7 @@
         :mobile="mobile"
         @submit="captchaSubmit"
         @sendCaptcha="send"
-        @close="visiable = false"
+        @close="closeCaptcha"
         v-if="visiable"
       />
     </transition>
@@ -52,11 +53,13 @@
   </div>
 </template>
 <script>
+
 import {setCookie, formatTime} from '@/common/js/utils'
 export default {
   name: 'login',
   data () {
     return {
+      value: '',
       captcha: '',
       active: 0,
       mobile: '',
@@ -70,7 +73,7 @@ export default {
     }
   },
   created () {
-    let {k, p, m, versionName} = this.$route.query
+    let {k, p, m} = this.$route.query
     if (k && m && (k !== '')) {
       this.captchaLogin({mobile: m, key: k})
     } else if (p && m && (p !== '')) {
@@ -78,11 +81,15 @@ export default {
     } else {
       this.maskVisiable = false
     }
-    if (versionName) {
-      this.$store.commit('UPDATEVERSION', versionName)
-    }
   },
   methods: {
+    handleClickLeft () {
+      this.$emit('close')
+    },
+    closeCaptcha () {
+      this.isRegister && (this.isRegister = false)
+      this.visiable = false
+    },
     refresh () {
       this.refreshing = true
     },
@@ -93,12 +100,10 @@ export default {
       this.active = v
     },
     loginFn (data) {
-      this.$router.push('home')
       this.getUserInfo(data)
       this.getLesson()
     },
     registerFn (data) {
-      this.$router.push('home')
       this.getUserInfo(data)
       this.getLesson()
     },
@@ -121,6 +126,7 @@ export default {
           this.$store.commit('UPLOAD_PHONE_NUM', mobile)
           this.$store.commit('UPLOAD_USER_INFO', data.data)
           let info = JSON.parse(JSON.stringify(Object.assign(data.data, obj)))
+          this.$emit('close')
           if (window.dsBridge) {
             let res = window.dsBridge.call('doInfoClick', info)
             res && console.log(res)
@@ -170,6 +176,7 @@ export default {
         })
         return
       }
+      console.log('loading')
       this.$toast.loading()
       this.passLogin(mobile, password, '提示')
     },
@@ -355,6 +362,11 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import '../../assets/scss/minix/index';
+.subtitle{
+  margin-top: 20px;
+  text-align: center;
+  color: #adadad;
+}
 .logo {
   margin: 15px auto;
   display: block;

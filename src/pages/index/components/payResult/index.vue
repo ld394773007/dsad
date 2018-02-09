@@ -18,7 +18,7 @@
         </div> -->
       </div>
     </div>
-    <a @click="$router.push('./download')" class="download_btn">去下载叮叮云教室App</a>
+    <a @click="handleClick" class="download_btn">{{btnText}}</a>
   </div>
 </template>
 <script>
@@ -27,7 +27,23 @@ export default {
   props: ['data', 'startTime', 'price'],
   data () {
     return {
-      download_mask: false
+      download_mask: false,
+      btnText: '去下载叮叮云教室App'
+    }
+  },
+  methods: {
+    handleClick () {
+      if (window.dsBridge) {
+        window.sessionStorage.setItem('homeActive', 2)
+        this.$router.push('./login')
+      } else {
+        this.$router.push('./download')
+      }
+    }
+  },
+  created () {
+    if (window.dsBridge) {
+      this.btnText = '返回课程列表'
     }
   }
 }

@@ -6,8 +6,8 @@ Vue.use(VueRouter)
 export default new VueRouter({
   routes: [
     {
-      path: '/home',
-      name: 'home',
+      path: '/login',
+      name: 'login',
       component: () => import('../pages/home')
     },
     {
@@ -39,11 +39,11 @@ export default new VueRouter({
       component: () => import('../components/payLogin')
     },
     // 登陆
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import('../pages/login')
-    },
+    // {
+    //   path: '/login',
+    //   name: 'login',
+    //   component: () => import('../pages/login')
+    // },
     // 找回密码
     {
       path: '/reset',
@@ -69,6 +69,26 @@ export default new VueRouter({
       path: '/order',
       name: 'order',
       component: () => import('../pages/order')
+    },
+    {
+      path: '/testPaper',
+      name: 'testPaper',
+      component: () => import('../pages/testPaper')
+    },
+    {
+      path: '/paper',
+      name: 'paper',
+      component: () => import('../pages/paper')
+    },
+    {
+      path: '/paperResult',
+      name: 'paperResult',
+      component: () => import('../pages/paperResult')
+    },
+    {
+      path: '/testDetail',
+      name: 'testDetail',
+      component: () => import('../pages/testDetail')
     }
   ]
 })

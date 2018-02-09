@@ -8,9 +8,10 @@
     </div>
     <div class="m_body" v-if="!show">
 
-      <van-tabs :active="active">
+      <van-tabs :active="active" @click="handleClick">
         <van-tab title="待上课程">
           <srcoll
+            v-if="!active"
             :data="lessonList"
             ref="scroll"
             class="srcoll_content"
@@ -24,12 +25,16 @@
                     <p>没有待上的课程哦~</p>
                   </div>
                   <lessonItem :key="item.id" :item="item" :index="index" v-for="(item,index) in lessonList"></lessonItem>
+                  <div class="no_more" v-if="lessonList.length">
+                    没有更多内容了
+                  </div>
                 </div>
             </div>
           </srcoll>
         </van-tab>
         <van-tab title="结束课程">
           <srcoll ref="scroll1"
+            v-if="active"
             class="srcoll_content"
             :data="end_lessonList"
             :pullDownRefresh="!!end_lessonList.length"
@@ -41,6 +46,9 @@
                     <p>没有已经结束的课程哦~</p>
                   </div>
                   <lessonItem :key="item.id" :item="item" :index="index" v-for="(item,index) in end_lessonList"></lessonItem>
+                  <div class="no_more" v-if="lessonList.length">
+                    没有更多内容了
+                  </div>
                 </div>
             </div>
           </srcoll>
@@ -58,6 +66,7 @@
     name: 'lessonList',
     data () {
       return {
+        active: 0,
         show: true,
         lessonList: null,
         end_lessonList: null,
@@ -68,6 +77,9 @@
       this.getList()
     },
     methods: {
+      handleClick (i) {
+        this.active = i
+      },
       onPullingDown (v) {
         this.getList(v)
       },

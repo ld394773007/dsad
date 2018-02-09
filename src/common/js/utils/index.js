@@ -5,6 +5,7 @@ import removeCookie from './removeCookie'
 import formatTime from './formatTime'
 import ismobile from './ismobile'
 import sortA from './sort'
+import formatSeconds from './formatSeconds'
 export {
   formatRemainTime,
   getCookie,
@@ -12,5 +13,6 @@ export {
   removeCookie,
   formatTime,
   ismobile,
-  sortA
+  sortA,
+  formatSeconds
 }

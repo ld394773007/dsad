@@ -413,6 +413,8 @@ li.van-picker-column--selected {
 
 .van-nav-bar__left {
   padding-right:30px;
+  padding-left: 15px;
+  left: 0;
 
 }
 
@@ -437,4 +439,209 @@ li.van-picker-column--selected {
 .bottom-go-enter, .bottom-go-leave-to /* .right-in-leave-active 在低于版本 2.1.8 中 */ {
   opacity: 0;
   transform: translateY(10%)
+}
+
+
+/* 试卷相关样式 start */
+.header-bar {
+  padding-top: 5px;
+  height: 56px;
+  border-bottom: 1px #e5e5e5 solid;
+}
+.paper-info {
+  padding-top: 20px;
+  background-color: #fff;
+  h2 {
+    margin: 15px auto;
+    width: 80%;
+    font-size: 20px;
+    text-align: center;
+  }
+  .paper-info-list {
+    padding: 20px 40px;
+    .paper-info-item {
+      margin-bottom: 5px;
+      color: #717881;
+    }
+  }
+  .paper-btn {
+    padding: 0 20px;
+  }
+}
+
+.paper {
+  background-color: #fff;
+  height: 100vh;
+  overflow: hidden;
+  .paper-content {
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+  }
+  .paper-title {
+    display: flex;
+    padding: 20px 10px;
+    & > span {
+      margin-right: 10px;
+      display: block;
+      width: 22px;
+      height: 22px;
+      background-color: $color_theme;
+      color: #fff;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 22px;
+    }
+    .paper-title-content {
+      width: 85%;
+      color: #4e5661;
+      font-size: 16px;
+    }
+  }
+  .paper-answer {
+    width: 320px;
+    margin-left: 40px;
+    margin-bottom: 30px;
+    color: #606771;
+    .answer-label {
+      margin-bottom: 15px;
+      .answer-content {
+        display: flex;
+        & > div {
+          display: flex;
+          width: 80%;
+          table-layout:fixed;
+          word-break: break-all;
+          overflow:hidden;
+          align-items: center;
+          margin-left: 5px;
+        }
+      }
+    }
+  }
+  .child-qustion > .paper-answer {
+    margin-left: 10px;
+  }
+  .paper-next-button {
+    width: 60px;
+    height: 60px;
+    background-color: $color_theme;
+    border-radius: 50%;
+    box-shadow: 0 3px 10px rgba(0,0,0,.156863), 0 3px 10px rgba(0,0,0,.227451);
+    position: fixed;
+    bottom: 10%;
+    right: 20px;
+    text-align: center;
+    line-height: 65px;
+    color: #fff;
+    font-size: 26px;
+    &:active {
+      background-color: #87c8f8;
+    }
+  }
+}
+
+.paper-list {
+  .paper-list-title {
+    span {
+      display: inline-block;
+      position: relative;
+      margin-right: 10px;
+      padding-left: 25px;
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #ccc;
+        transform: translateY(-50%);
+      }
+    }
+    .yd::before {
+      background-color: rgb(19, 206, 102);
+    }
+    .cw::before {
+      background-color: #FF0000;
+    }
+  }
+  .paper-item {
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 10px;
+    &:nth-child(6n) {
+      margin-right: 0;
+    }
+  }
+  .mu-raised-button {
+    height: 30px;
+    min-width: 30px;
+  }
+  .mu-raised-button-label {
+    padding: 0;
+  }
+}
+
+.paper-result {
+  background-color: #fff;
+  .paper-item {
+    &:nth-child(6n) {
+      margin-right: 10px;
+    }
+  }
+  .result-title {
+    font-size: 16px;
+    padding: 15px 10px;
+    border-bottom: 1px rgb(230, 229, 229) solid;
+  }
+  .result-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    color: #999;
+    border-bottom: 1px rgb(230, 229, 229) solid;
+    .red {
+      color: #FF0000;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  }
+  .result-list > ul {
+    padding: 10px 20px;
+    padding-bottom: 20px;
+  }
+  .paper-list-title {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+}
+/* end */
+.answer .mu-radio-ripple-wrapper {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.answer .mu-radio, .answer .mu-radio-wrapper {
+  height: auto;
+}
+.mu-radio-label img {
+  vertical-align: middle;
+}
+.van-toast-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 2000;
+}
+
+.no_more {
+  width: 100%;
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 10px;
 }
